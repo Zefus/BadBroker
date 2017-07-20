@@ -19,10 +19,12 @@ namespace BadBroker.Web.Controllers
         {
             if (model != null)
             {
+                int i = 0;
                 return Json("Success");
             }
             else
             {
+                int ii = 0;
                 return Json("An Error Has occoured");
             }
         }

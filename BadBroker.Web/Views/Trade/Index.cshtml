@@ -2,14 +2,75 @@
 
 <html>
 <head>
+    <meta charset="utf-8">
     <meta name="viewport" content="width=device-width" />
     <title>BadBroker</title>
-    <script src="~/Scripts/jquery-1.10.2.min.js"></script>
-    <script src="~/Scripts/TradeButton.js"></script>
+    <script type="text/javascript" src="~/Scripts/jquery-1.11.1.min.js"></script>
+    <script type="text/javascript" src="~/Scripts/moment-with-locales.min.js"></script>
+    <script type="text/javascript" src="~/Scripts/bootstrap.min.js"></script>
+    <script type="text/javascript" src="~/Scripts/bootstrap-datetimepicker.min.js"></script>
+    <link rel="stylesheet" href="~/Content/bootstrap.min.css"/>
+    <link rel="stylesheet" href="~/Content/bootstrap-datetimepicker.min.css"/>
 </head>
 <body>
-    <div>
-        <button id="trade">getJSON</button>
-    </div>
+   <div class="container" style="margin-top:10px">
+       <div class="row">
+           <div class="col-md-4 col-md-offset-4">
+               <form>
+                   <div class="form-group">
+                       <div class="input-group date" id="startDate">
+                           <input type="text" class="form-control" />
+                           <span class="input-group-addon">
+                               <span class="glyphicon-calendar glyphicon"></span>
+                           </span>
+                       </div>
+                   </div>
+                   <div class="form-group">
+                       <div class="input-group date" id="endDate">
+                           <input type="text" class="form-control" />
+                           <span class="input-group-addon">
+                               <span class="glyphicon-calendar glyphicon"></span>
+                           </span>
+                       </div>
+                   </div>
+                   <div>
+                       <button class="btn btn-primary" id="trade">getJSON</button>
+                   </div>
+               </form>
+           </div>
+       </div>
+   </div>
+
+    <script type="text/javascript">
+        $(function () {
+
+            $('#startDate').datetimepicker(
+                { pickTime: false, language: 'ru' }
+            );
+
+            $('#endDate').datetimepicker(
+                { pickTime: false, language: 'ru' }
+            );
+
+            $('#trade').click(function (e) {
+                $.getJSON("http://api.fixer.io/latest", function (data) {
+
+                    $.ajax({
+                        url: "/Trade/Trade",
+                        type: "POST",
+                        data: JSON.stringify(data),
+                        contentType: "application/json; charset=utf-8",
+                        dataType: "json",
+                        error: function (response) {
+                            alert(response.responseText);
+                        },
+                        success: function (response) {
+                            alert(response);
+                        }
+                    });
+                });
+            });
+        });
+    </script>
 </body>
 </html>
