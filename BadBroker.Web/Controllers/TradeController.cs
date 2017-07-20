@@ -9,13 +9,14 @@ namespace BadBroker.Web.Controllers
 {
     public class TradeController : Controller
     {
+        [HttpGet]
         public ActionResult Index()
         {
             return View();
         }
 
         [HttpPost]
-        public ActionResult Trade(InputViewModel model)
+        public ActionResult Index(InputViewModel model)
         {
             if (model != null)
             {
@@ -24,7 +25,6 @@ namespace BadBroker.Web.Controllers
             }
             else
             {
-                int ii = 0;
                 return Json("An Error Has occoured");
             }
         }

@@ -9,8 +9,6 @@ namespace BadBroker.Web.Models
     {
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
-        public string Base { get; set; }
-        public DateTime Date { get; set; }
-        public Dictionary<string, decimal> Rates { get; set; }
+        public List<RatesViewModel> AllRates { get; set; }
     }
 }
