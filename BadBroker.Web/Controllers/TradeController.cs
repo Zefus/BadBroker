@@ -19,7 +19,6 @@ namespace BadBroker.Web.Controllers
         {
             if (model != null)
             {
-                int i = 0;
                 return Json("Success");
             }
             else
