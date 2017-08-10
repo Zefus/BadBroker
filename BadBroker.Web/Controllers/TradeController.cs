@@ -3,12 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
-using BadBroker.Web.Models;
+using BadBroker.BusinessLogic.DataTransferObjects;
 
 namespace BadBroker.Web.Controllers
 {
     public class TradeController : Controller
     {
+
+
         [HttpGet]
         public ActionResult Index()
         {
@@ -16,7 +18,7 @@ namespace BadBroker.Web.Controllers
         }
 
         [HttpPost]
-        public ActionResult Index(InputViewModel model)
+        public ActionResult Index(InputDTO model)
         {
             if (model != null)
             {
