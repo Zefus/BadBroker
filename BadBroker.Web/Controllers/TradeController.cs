@@ -4,13 +4,12 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using BadBroker.BusinessLogic.DataTransferObjects;
+using BadBroker.BusinessLogic.Services;
 
 namespace BadBroker.Web.Controllers
 {
     public class TradeController : Controller
     {
-
-
         [HttpGet]
         public ActionResult Index()
         {
@@ -20,15 +19,11 @@ namespace BadBroker.Web.Controllers
         [HttpPost]
         public ActionResult Index(InputDTO model)
         {
-            if (model != null)
-            {
-                int i = 0;
-                return Json("Success");
-            }
-            else
-            {
-                return Json("An Error Has occoured");
-            }
+            int ii = 0;
+            TradeService tradeService = new TradeService();
+            var result = tradeService.MakeTrade(model);
+            int i = 0;
+            return View();
         }
     }
 }

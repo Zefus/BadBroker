@@ -11,15 +11,11 @@ namespace BadBroker.BusinessLogic.BusinessModels
     {
         private List<OutputDTO> _revenues;
 
-        public BestCaseSearcher()
-        {
-            _revenues = new List<OutputDTO>();
-        }
-
         public OutputDTO SearchBestCase(InputDTO inputDTO, string currency)
         {
-            int index = 1;
+            int index = 0;
             int lastElement = inputDTO.AllRates.Count();
+            _revenues = new List<OutputDTO>();
 
             while (index != lastElement)
             {
@@ -27,8 +23,8 @@ namespace BadBroker.BusinessLogic.BusinessModels
                 {
                     var buyDate = inputDTO.AllRates[index].Date;
                     var sellDate = inputDTO.AllRates[i].Date;
-                    var revenue = inputDTO.AllRates[i].Rates[currency] * inputDTO.Score
-                        / inputDTO.AllRates[index].Rates[currency] - (inputDTO.AllRates[i].Date.Subtract(inputDTO.AllRates[index].Date).Days);
+                    var revenue = inputDTO.AllRates[index].Rates[currency] * inputDTO.Score
+                        / inputDTO.AllRates[i].Rates[currency] - (inputDTO.AllRates[i].Date.Subtract(inputDTO.AllRates[index].Date).Days);
                     var benefit = revenue - inputDTO.Score;
                     OutputDTO outputDTO = new OutputDTO(buyDate, sellDate, currency, benefit, revenue);
                     _revenues.Add(outputDTO);
