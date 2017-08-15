@@ -5,6 +5,7 @@ using System.Web;
 using System.Web.Mvc;
 using BadBroker.BusinessLogic.DataTransferObjects;
 using BadBroker.BusinessLogic.Services;
+using Newtonsoft.Json;
 
 namespace BadBroker.Web.Controllers
 {
@@ -17,13 +18,11 @@ namespace BadBroker.Web.Controllers
         }
 
         [HttpPost]
-        public ActionResult Index(InputDTO model)
+        public string Index(InputDTO model)
         {
-            int ii = 0;
             TradeService tradeService = new TradeService();
             var result = tradeService.MakeTrade(model);
-            int i = 0;
-            return View();
+            return JsonConvert.SerializeObject(result);
         }
     }
 }

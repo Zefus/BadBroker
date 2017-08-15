@@ -56,12 +56,10 @@
                         data: JSON.stringify(inputData),
                         contentType: "application/json; charset=utf-8",
                         dataType: "json",
-                        error: function (response) {
-                            alert(response.responseText);
-                        },
                         success: function (response) {
-                            alert(response);
-                        }
+                            var i = 0;
+                            alert("Data from server: " + response);
+                        }                        
                     });
                 }
             });
