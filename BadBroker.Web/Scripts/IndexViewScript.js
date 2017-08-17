@@ -58,7 +58,12 @@
                         dataType: "json",
                         success: function (response) {
                             var i = 0;
-                            alert("Data from server: " + response);
+                            console.log(response.Currency);
+                            $('#currency').append(response.Currency);
+                            $('#buyDate').append(moment(response.BuyDate).format('DD[-]MM[-]YYYY'));
+                            $('#sellDate').append(moment(response.SellDate).format('DD[-]MM[-]YYYY'));
+                            $('#revenueUSD').append(response.Score);
+                            $('#results').css("visibility", "initial");
                         }                        
                     });
                 }
