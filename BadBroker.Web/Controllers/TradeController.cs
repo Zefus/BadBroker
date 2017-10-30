@@ -16,7 +16,7 @@ namespace BadBroker.Web.Controllers
         {
             return View();
         }
-
+        
         [HttpPost]
         public string Index(InputDTO model)
         {

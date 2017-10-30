@@ -13,10 +13,13 @@ namespace BadBroker.BusinessLogic.BusinessModels
 
         public OutputDTO SearchBestCase(InputDTO inputDTO, string currency)
         {
+            //Принимаем начальный индекс за 0
             int index = 0;
+            //Запоминаем номер последнего элемента
             int lastElement = inputDTO.AllRates.Count();
             _revenues = new List<OutputDTO>();
 
+            //Вычисляем наибольшую прибыль для выбранной валюты
             while (index != lastElement)
             {
                 for (int i = index; i < lastElement; i++)
@@ -26,6 +29,7 @@ namespace BadBroker.BusinessLogic.BusinessModels
                     var revenue = inputDTO.AllRates[index].Rates[currency] * inputDTO.Score
                         / inputDTO.AllRates[i].Rates[currency] - (inputDTO.AllRates[i].Date.Subtract(inputDTO.AllRates[index].Date).Days);
                     var benefit = revenue - inputDTO.Score;
+                    //Помещаем выходную информацию в объект
                     OutputDTO outputDTO = new OutputDTO(buyDate, sellDate, currency, benefit, revenue);
                     _revenues.Add(outputDTO);
                 }
