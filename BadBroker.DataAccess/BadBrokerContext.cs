@@ -14,18 +14,14 @@ namespace BadBroker.DataAccess
     {
         public DbSet<QuotesData> QuotesData { get; set; }
 
+        public BadBrokerContext()
+        {
+            Database.EnsureCreated();
+        }
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            ConfigurationBuilder builder = new ConfigurationBuilder();
-
-            builder.SetBasePath(Directory.GetCurrentDirectory());
-            builder.AddJsonFile("config.js");
-
-            IConfigurationRoot config = builder.Build();
-
-            string connectionString = config.GetConnectionString("DefaultConnection");
-
-            optionsBuilder.UseSqlServer(connectionString);
+            optionsBuilder.UseSqlServer(@"Server=IT-REZERV\SQLEXPRESS01;Database=helloappdb;Trusted_Connection=True;");
         }
     }
 }
