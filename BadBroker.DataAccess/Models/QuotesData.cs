@@ -4,13 +4,13 @@ using System.Text;
 using System.ComponentModel.DataAnnotations.Schema;
 using Newtonsoft.Json;
 
-namespace BadBroker.DataAccess.Entities
+namespace BadBroker.DataAccess.Models
 {
-    public class RatesPerDate
+    public class QuotesData
     {
-        public int ID { get; set; }
-        public string Base { get; set; }
-        public DateTime Date { get; set; }
+        public int Id { get; set; }
+        public string StartDate { get; set; }
+        public string EndDate { get; set; }
         [NotMapped]
         public Dictionary<string, decimal> Rates { get; set; }
         [Column("Rates")]
@@ -19,7 +19,7 @@ namespace BadBroker.DataAccess.Entities
             get => JsonConvert.SerializeObject(Rates);
             set
             {
-                Rates = (Dictionary<string, decimal>) JsonConvert.DeserializeObject(value);
+                Rates = (Dictionary<string, decimal>)JsonConvert.DeserializeObject(value);
             }
         }
     }

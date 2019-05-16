@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.26403.7
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BadBroker.DataAccess", "BadBroker.DataAccess\BadBroker.DataAccess.csproj", "{B4D16FB4-0B90-4B28-BCE9-A94CF55EE622}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BadBroker.DataAccess", "BadBroker.DataAccess\BadBroker.DataAccess.csproj", "{1F741AC6-8FF0-417C-BACD-946C7D923D41}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,12 +11,15 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{B4D16FB4-0B90-4B28-BCE9-A94CF55EE622}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B4D16FB4-0B90-4B28-BCE9-A94CF55EE622}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B4D16FB4-0B90-4B28-BCE9-A94CF55EE622}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B4D16FB4-0B90-4B28-BCE9-A94CF55EE622}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1F741AC6-8FF0-417C-BACD-946C7D923D41}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1F741AC6-8FF0-417C-BACD-946C7D923D41}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1F741AC6-8FF0-417C-BACD-946C7D923D41}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1F741AC6-8FF0-417C-BACD-946C7D923D41}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {6DAF67A7-A2CE-427B-AA3C-9DA3078DA67A}
 	EndGlobalSection
 EndGlobal
