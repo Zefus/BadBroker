@@ -21,7 +21,7 @@ namespace BadBroker.DataAccess
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer(@"Server=IT-REZERV\SQLEXPRESS01;Database=helloappdb;Trusted_Connection=True;");
+            optionsBuilder.UseSqlServer(@"Server=DESKTOP-ECJOLSJ\SQLEXPRESS;Database=badbrokerdb;Trusted_Connection=True;");
         }
     }
 }
