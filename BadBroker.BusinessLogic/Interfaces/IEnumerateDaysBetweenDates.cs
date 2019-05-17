@@ -5,6 +5,6 @@ namespace BadBroker.BusinessLogic.Interfaces
 {
     public interface IEnumerateDaysBetweenDates
     {
-        List<DateTime> ExecuteAsync(DateTime startDate, DateTime endDate);
+        List<string> ExecuteAsync(DateTime startDate, DateTime endDate);
     }
 }
