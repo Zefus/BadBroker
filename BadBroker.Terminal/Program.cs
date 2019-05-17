@@ -1,10 +1,9 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
+using System.Collections.Generic;
 using BadBroker.DataAccess;
 using BadBroker.DataAccess.Models;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Configuration.FileExtensions;
-using Microsoft.Extensions.Configuration.Json;
 
 namespace BadBroker.Terminal
 {
@@ -12,15 +11,25 @@ namespace BadBroker.Terminal
     {
         static void Main(string[] args)
         {
-            using (BadBrokerContext badBrokerContext = new BadBrokerContext())
-            {
-                QuotesData quotesData = new QuotesData();
-                quotesData.StartDate = "qqq";
-                quotesData.EndDate = "www";
+            DateTime start = new DateTime(2019, 03, 01);
+            DateTime end = new DateTime(2019, 03, 10);
 
-                badBrokerContext.QuotesData.Add(quotesData);
-                badBrokerContext.SaveChanges();
+            List<DateTime> dates = new List<DateTime>();
+
+            for (DateTime date = start; date <= end; date = date.AddDays(1))
+            {
+                dates.Add(date);
             }
+
+            //using (BadBrokerContext badBrokerContext = new BadBrokerContext())
+            //{
+            //    QuotesData quotesData = new QuotesData();
+            //    quotesData.StartDate = "qqq";
+            //    quotesData.EndDate = "www";
+
+            //    badBrokerContext.QuotesData.Add(quotesData);
+            //    badBrokerContext.SaveChanges();
+            //}
         }
     }
 }
