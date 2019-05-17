@@ -1,25 +1,24 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
+using System.Threading.Tasks;
 using System.Collections.Generic;
 using BadBroker.DataAccess;
 using BadBroker.DataAccess.Models;
+using BadBroker.BusinessLogic.ModelsDTO;
+using Newtonsoft.Json;
 
 namespace BadBroker.Terminal
 {
     class Program
     {
+        private const string ACCESS_KEY = "c322dc640d70be2026e7ae22dd41417c";
+
         static void Main(string[] args)
         {
-            DateTime start = new DateTime(2019, 03, 01);
-            DateTime end = new DateTime(2019, 03, 10);
 
-            string day = start.Day < 10 ? $"0{start.Day}" : start.Day.ToString();
-
-            string month = start.Month < 10 ? $"0{start.Month}" : start.Month.ToString();
-
-            string str = $"{start.Day}-{start.Month}-{start.Year}";
-
+            Task.Run(() => met());
             //using (BadBrokerContext badBrokerContext = new BadBrokerContext())
             //{
             //    QuotesData quotesData = new QuotesData();
@@ -29,6 +28,25 @@ namespace BadBroker.Terminal
             //    badBrokerContext.QuotesData.Add(quotesData);
             //    badBrokerContext.SaveChanges();
             //}
+            Console.ReadKey();
+        }
+
+        public static async void met()
+        {
+            using (HttpClient client = new HttpClient())
+            {
+                try
+                {
+                    HttpResponseMessage response = await client.GetAsync($"http://apilayer.net/api/historical?access_key=c322dc640d70be2026e7ae22dd41417c&date=2015-05-01&currencies=RUB,EUR,GBP,JPY&format=1");
+                    response.EnsureSuccessStatusCode();  
+                    string responseBody = await response.Content.ReadAsStringAsync();
+                    QuotesDTO result = JsonConvert.DeserializeObject<QuotesDTO>(responseBody);
+                }
+                catch (HttpRequestException e)
+                {
+
+                }
+            }
         }
     }
 }
