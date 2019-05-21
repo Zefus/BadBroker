@@ -17,36 +17,18 @@ namespace BadBroker.Terminal
 
         static void Main(string[] args)
         {
-
-            Task.Run(() => met());
             //using (BadBrokerContext badBrokerContext = new BadBrokerContext())
             //{
             //    QuotesData quotesData = new QuotesData();
-            //    quotesData.StartDate = "qqq";
-            //    quotesData.EndDate = "www";
+            //    quotesData.Date = DateTime.Now;
+            //    quotesData.Source = "RUB";
 
             //    badBrokerContext.QuotesData.Add(quotesData);
             //    badBrokerContext.SaveChanges();
             //}
+
+            Console.WriteLine(DateTime.Now);
             Console.ReadKey();
-        }
-
-        public static async void met()
-        {
-            using (HttpClient client = new HttpClient())
-            {
-                try
-                {
-                    HttpResponseMessage response = await client.GetAsync($"http://apilayer.net/api/historical?access_key=c322dc640d70be2026e7ae22dd41417c&date=2015-05-01&currencies=RUB,EUR,GBP,JPY&format=1");
-                    response.EnsureSuccessStatusCode();  
-                    string responseBody = await response.Content.ReadAsStringAsync();
-                    QuotesDTO result = JsonConvert.DeserializeObject<QuotesDTO>(responseBody);
-                }
-                catch (HttpRequestException e)
-                {
-
-                }
-            }
         }
     }
 }

@@ -8,16 +8,16 @@ namespace BadBroker.BusinessLogic.ModelsDTO
         public DateTime SellDate { get; set; }
         public string Currency { get; set; }
         public decimal Benefit { get; set; }
-        public decimal Score { get; set; }
+        public decimal Revenue { get; set; }
 
         public OutputDTO() { }
-        public OutputDTO(DateTime buyDate, DateTime sellDate, string currency, decimal benefit, decimal score)
+        public OutputDTO(DateTime buyDate, DateTime sellDate, string currency, decimal benefit, decimal revenue)
         {
             BuyDate = buyDate;
             SellDate = sellDate;
             Currency = currency;
             Benefit = benefit;
-            Score = score;
+            Revenue = revenue;
         }
     }
 }

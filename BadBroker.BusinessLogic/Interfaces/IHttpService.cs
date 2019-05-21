@@ -8,6 +8,6 @@ namespace BadBroker.BusinessLogic.Interfaces
 {
     public interface IHttpService
     {
-        Task<List<QuotesDTO>> GetCurrencyRatesAsync(List<string> date);
+        Task<IEnumerable<QuotesDTO>> GetCurrencyRatesAsync(IEnumerable<DateTime> date);
     }
 }

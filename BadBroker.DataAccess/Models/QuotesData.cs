@@ -9,17 +9,17 @@ namespace BadBroker.DataAccess.Models
     public class QuotesData
     {
         public int Id { get; set; }
-        public string StartDate { get; set; }
-        public string EndDate { get; set; }
+        public DateTime Date { get; set; }
+        public string Source { get; set; }
         [NotMapped]
-        public Dictionary<string, decimal> Rates { get; set; }
+        public Dictionary<string, decimal> Quotes { get; set; }
         [Column("Rates")]
-        public string RatesJson
+        public string QuotesJson
         {
-            get => JsonConvert.SerializeObject(Rates);
+            get => JsonConvert.SerializeObject(Quotes);
             set
             {
-                Rates = (Dictionary<string, decimal>)JsonConvert.DeserializeObject(value);
+                Quotes = (Dictionary<string, decimal>)JsonConvert.DeserializeObject(value);
             }
         }
     }
