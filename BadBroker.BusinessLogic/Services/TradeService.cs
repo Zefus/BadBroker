@@ -26,7 +26,7 @@ namespace BadBroker.BusinessLogic.Services
                     //dates from API
                     IEnumerable<DateTime> apiDates = dates.Except(db.QuotesData.Select(qd => qd.Date));
                     //quotes from DB
-                    List<QuotesDTO> cachedQuotes = new List<QuotesDTO>();             
+                    List<QuotesDTO> cachedQuotes = new List<QuotesDTO>();
 
                     foreach (QuotesData quotesData in db.QuotesData.Where(qd => cachedDates.Contains(qd.Date)))
                     {
@@ -37,7 +37,7 @@ namespace BadBroker.BusinessLogic.Services
                     //quotes from API
                     List<QuotesDTO> apiQuotes = (await httpService.GetCurrencyRatesAsync(apiDates)).ToList();
 
-                    apiQuotes.ForEach(async aQ => 
+                    apiQuotes.ForEach(async aQ =>
                     {
                         QuotesData quotesData = new QuotesData();
                         quotesData.Source = aQ.Source;
@@ -48,7 +48,9 @@ namespace BadBroker.BusinessLogic.Services
 
                     List<QuotesDTO> quotes = apiQuotes.Union(cachedQuotes).OrderBy(q => q.Date).ToList();
 
-
+                    BestCaseSearcher bestCaseSearcher = new BestCaseSearcher();
+                    OutputDTO bestCase = bestCaseSearcher.SearchBestCase(quotes);
+                    return bestCase;
                 }
             }
             catch (Exception e)

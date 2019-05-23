@@ -23,7 +23,7 @@ namespace BadBroker.BusinessLogic.Services
                 {
                     foreach (DateTime date in dates)
                     {
-                        HttpResponseMessage response = await client.GetAsync($"http://apilayer.net/api/historical?access_key={ACCESS_KEY}&date={date.ToApiStringFormat()}currencies=RUB,EUR,GBP,JPY&format=1");
+                        HttpResponseMessage response = await client.GetAsync($"http://apilayer.net/api/historical?access_key={ACCESS_KEY}&date={date.ToApiStringFormat()}&currencies=RUB,EUR,GBP,JPY&format=1");
                         response.EnsureSuccessStatusCode();
                         string responseBody = await response.Content.ReadAsStringAsync();
                         QuotesDTO result = JsonConvert.DeserializeObject<QuotesDTO>(responseBody);
