@@ -14,7 +14,7 @@ namespace BadBroker.BusinessLogic.Interfaces
             where TEntity : class;
         Task<IEnumerable<TResult>> SelectQuotes<TEntity, TResult>(Expression<Func<TEntity, TResult>> selector) 
             where TEntity : class;
-        void AddQuotesRange<TEntity>(IEnumerable<TEntity> entity) 
+        Task AddQuotesRange<TEntity>(IEnumerable<TEntity> entity) 
             where TEntity : class;
     }
 }

@@ -47,15 +47,16 @@ namespace BadBroker.BusinessLogic.Services
             }
         }
 
-        public async void AddQuotesRange<TEntity>(IEnumerable<TEntity> entities) 
+        public Task AddQuotesRange<TEntity>(IEnumerable<TEntity> entities) 
             where TEntity : class
         {
             try
             {
                 using (BadBrokerContext db = new BadBrokerContext())
                 {
-                    await db.AddRangeAsync(entities);
-                    await db.SaveChangesAsync();
+                    db.AddRange(entities);
+                    db.SaveChanges();
+                    return Task.FromResult(1);
                 }
             }
             catch (Exception e)

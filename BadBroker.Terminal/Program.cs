@@ -50,17 +50,17 @@ namespace BadBroker.Terminal
 
         static async void MainAsync(string[] args)
         {
-            //TradeService tradeService = new TradeService();
+            TradeService tradeService = new TradeService();
 
-            //InputDTO inputDTO = new InputDTO(new DateTime(2014, 12, 1), new DateTime(2014, 12, 31));
+            InputDTO inputDTO = new InputDTO(new DateTime(2014, 12, 1), new DateTime(2014, 12, 31));
 
-            //OutputDTO outputDTO = await tradeService.MakeTrade(inputDTO);
+            OutputDTO outputDTO = await tradeService.MakeTrade(inputDTO);
 
-            DBService dBService = new DBService();
+            //DBService dBService = new DBService();
 
             //IEnumerable<QuotesData> quotesDatas = dBService.GetQuotes<QuotesData>();
 
-            IEnumerable<DateTime> dates = await dBService.SelectQuotes<QuotesData, DateTime>(qd => qd.Date);
+            //IEnumerable<DateTime> dates = await dBService.SelectQuotes<QuotesData, DateTime>(qd => qd.Date);
         }
     }
 }

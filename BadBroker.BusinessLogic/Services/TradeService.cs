@@ -21,14 +21,16 @@ namespace BadBroker.BusinessLogic.Services
                     EnumerateDaysBetweenDates enumerateDaysBetweenDates = new EnumerateDaysBetweenDates();
                     IEnumerable<DateTime> dates = enumerateDaysBetweenDates.Execute(inputDTO.StartDate, inputDTO.EndDate);
 
-                    //dates from DB
-                    IEnumerable<DateTime> cachedDates = dates.Intersect(db.QuotesData.Select(qd => qd.Date));
+                    DBService dBService = new DBService();
+
+                    //dates from DB db.QuotesData.Select(qd => qd.Date)
+                    IEnumerable<DateTime> cachedDates = dates.Intersect(await dBService.SelectQuotes<QuotesData, DateTime>(qd => qd.Date));
                     //dates from API
-                    IEnumerable<DateTime> apiDates = dates.Except(db.QuotesData.Select(qd => qd.Date));
+                    IEnumerable<DateTime> apiDates = dates.Except(await dBService.SelectQuotes<QuotesData, DateTime>(qd => qd.Date));
                     //quotes from DB
                     List<QuotesDTO> cachedQuotes = new List<QuotesDTO>();
 
-                    IQueryable<QuotesData> quotesDatas = await Task.Run(() => db.QuotesData.Where(qd => cachedDates.Contains(qd.Date)));
+                    IEnumerable<QuotesData> quotesDatas = await dBService.GetQuotes<QuotesData>(qd => cachedDates.Contains(qd.Date));
 
                     foreach (QuotesData quotesData in quotesDatas)
                     {
@@ -38,15 +40,18 @@ namespace BadBroker.BusinessLogic.Services
                     HttpService httpService = new HttpService();
                     //quotes from API
                     List<QuotesDTO> apiQuotes = (await httpService.GetCurrencyRatesAsync(apiDates)).ToList();
+                    List<QuotesData> quotesForCashing = new List<QuotesData>();
 
-                    apiQuotes.ForEach(async aQ =>
+                    apiQuotes.ForEach(aQ =>
                     {
                         QuotesData quotesData = new QuotesData();
                         quotesData.Source = aQ.Source;
                         quotesData.Date = aQ.Date;
                         quotesData.Quotes = aQ.Quotes;
-                        await db.QuotesData.AddAsync(quotesData);
+                        quotesForCashing.Add(quotesData);
                     });
+
+                    await dBService.AddQuotesRange(quotesForCashing);
 
                     List<QuotesDTO> quotes = apiQuotes.Union(cachedQuotes).OrderBy(q => q.Date).ToList();
 
