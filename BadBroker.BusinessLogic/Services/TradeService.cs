@@ -28,7 +28,9 @@ namespace BadBroker.BusinessLogic.Services
                     //quotes from DB
                     List<QuotesDTO> cachedQuotes = new List<QuotesDTO>();
 
-                    foreach (QuotesData quotesData in db.QuotesData.Where(qd => cachedDates.Contains(qd.Date)))
+                    IQueryable<QuotesData> quotesDatas = await Task.Run(() => db.QuotesData.Where(qd => cachedDates.Contains(qd.Date)));
+
+                    foreach (QuotesData quotesData in quotesDatas)
                     {
                         cachedQuotes.Add(new QuotesDTO(quotesData.Source, quotesData.Date, quotesData.Quotes));
                     }
