@@ -18,7 +18,15 @@ namespace BadBroker.Terminal
 
         static void Main(string[] args)
         {
-            Task.Run(() => MainAsync(args));
+            string date = "2014-12-01";
+
+            string[] s = date.Split('-');
+
+            int year = Convert.ToInt32(s[0]);
+            int month = Convert.ToInt32(s[1]);
+            int day = Convert.ToInt32(s[2]);
+
+            //Task.Run(() => MainAsync(args));
 
             Console.ReadKey();
         }
@@ -50,17 +58,7 @@ namespace BadBroker.Terminal
 
         static async void MainAsync(string[] args)
         {
-            TradeService tradeService = new TradeService();
 
-            InputDTO inputDTO = new InputDTO(new DateTime(2014, 12, 1), new DateTime(2014, 12, 31));
-
-            OutputDTO outputDTO = await tradeService.MakeTrade(inputDTO);
-
-            //DBService dBService = new DBService();
-
-            //IEnumerable<QuotesData> quotesDatas = dBService.GetQuotes<QuotesData>();
-
-            //IEnumerable<DateTime> dates = await dBService.SelectQuotes<QuotesData, DateTime>(qd => qd.Date);
         }
     }
 }

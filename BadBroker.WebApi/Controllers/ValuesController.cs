@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using BadBroker.BusinessLogic.ModelsDTO;
+using BadBroker.BusinessLogic.Services;
 
 namespace BadBroker.WebApi.Controllers
 {
@@ -26,8 +28,9 @@ namespace BadBroker.WebApi.Controllers
 
         // POST api/values
         [HttpPost]
-        public void Post([FromBody] string value)
+        public void Post([FromBody] string startdate, [FromBody] string enddate)
         {
+
         }
 
         // PUT api/values/5
