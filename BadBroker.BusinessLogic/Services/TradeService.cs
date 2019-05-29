@@ -12,14 +12,19 @@ namespace BadBroker.BusinessLogic.Services
 {
     public class TradeService : ITradeService
     {
-        public async Task<OutputDTO> MakeTrade(InputDTO inputDTO)
+        public async Task<OutputDTO> MakeTrade(string startDateString, string endDateString)
         {
             try
             {
                 using (BadBrokerContext db = new BadBrokerContext())
                 {
+                    StringToDateParser stringToDateParser = new StringToDateParser();
+
+                    DateTime startDate = stringToDateParser.Parse(startDateString);
+                    DateTime endDate = stringToDateParser.Parse(endDateString);
+
                     EnumerateDaysBetweenDates enumerateDaysBetweenDates = new EnumerateDaysBetweenDates();
-                    IEnumerable<DateTime> dates = enumerateDaysBetweenDates.Execute(inputDTO.StartDate, inputDTO.EndDate);
+                    IEnumerable<DateTime> dates = enumerateDaysBetweenDates.Execute(startDate, endDate);
 
                     DBService dBService = new DBService();
 

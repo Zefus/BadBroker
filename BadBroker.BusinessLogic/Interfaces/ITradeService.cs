@@ -8,6 +8,6 @@ namespace BadBroker.BusinessLogic.Interfaces
 {
     public interface ITradeService
     {
-        Task<OutputDTO> MakeTrade(InputDTO inputDTO);
+        Task<OutputDTO> MakeTrade(string startDateString, string endDateString);
     }
 }
