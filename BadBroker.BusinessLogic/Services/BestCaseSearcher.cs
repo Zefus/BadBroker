@@ -44,7 +44,11 @@ namespace BadBroker.BusinessLogic.Services
 
                 return result;
             }
-            catch (Exception e)
+            catch (NullReferenceException ex)
+            {
+                throw ex;
+            }
+            catch (Exception ex)
             {
                 throw new NotImplementedException();
             }

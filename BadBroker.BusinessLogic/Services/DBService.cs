@@ -24,9 +24,9 @@ namespace BadBroker.BusinessLogic.Services
                     return await query.ToListAsync().ConfigureAwait(false);
                 }
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                throw new NotImplementedException();
+                throw ex;
             }
         }
 
@@ -41,9 +41,9 @@ namespace BadBroker.BusinessLogic.Services
                     return await query.ToListAsync().ConfigureAwait(false);
                 }
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                throw new NotImplementedException();
+                throw ex;
             }
         }
 
@@ -59,9 +59,13 @@ namespace BadBroker.BusinessLogic.Services
                     return Task.FromResult(1);
                 }
             }
-            catch (Exception e)
+            catch (DbUpdateException ex)
             {
-                throw new NotImplementedException();
+                throw ex;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
             }
         }
     }
