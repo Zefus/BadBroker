@@ -32,6 +32,7 @@ namespace BadBroker.BusinessLogic.Services
                     IEnumerable<DateTime> cachedDates = dates.Intersect(await dBService.SelectQuotes<QuotesData, DateTime>(qd => qd.Date));
                     //dates from API
                     IEnumerable<DateTime> apiDates = dates.Except(await dBService.SelectQuotes<QuotesData, DateTime>(qd => qd.Date));
+
                     //quotes from DB
                     List<QuotesDTO> cachedQuotes = new List<QuotesDTO>();
 

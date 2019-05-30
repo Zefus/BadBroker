@@ -19,7 +19,7 @@ namespace BadBroker.DataAccess.Models
             get => JsonConvert.SerializeObject(Quotes);
             set
             {
-                Quotes = (Dictionary<string, decimal>)JsonConvert.DeserializeObject(value);
+                Quotes = JsonConvert.DeserializeObject<Dictionary<string, decimal>>(value);
             }
         }
     }

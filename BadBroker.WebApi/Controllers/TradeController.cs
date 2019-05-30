@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using BadBroker.BusinessLogic.ModelsDTO;
+using BadBroker.BusinessLogic.Services;
+using Newtonsoft.Json;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -27,9 +30,20 @@ namespace BadBroker.WebApi.Controllers
 
         // POST api/<controller>
         [HttpPost]
-        public void Post([FromBody] string startdate, [FromBody] string enddate)
+        public async Task<IActionResult> Post([FromBody] InputDTO inputDTO)
         {
+            try
+            {
+                TradeService tradeService = new TradeService();
 
+                OutputDTO outputDTO = await tradeService.MakeTrade(inputDTO.StartDate, inputDTO.EndDate);
+
+                return Json(outputDTO);
+            }
+            catch (Exception ex)
+            {
+                throw new NotImplementedException();
+            }
         }
 
         // PUT api/<controller>/5
