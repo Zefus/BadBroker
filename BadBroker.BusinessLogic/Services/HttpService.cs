@@ -31,9 +31,13 @@ namespace BadBroker.BusinessLogic.Services
                     }
                     return quotes;
                 }
-                catch (HttpRequestException e)
+                catch (HttpRequestException ex)
                 {
-                    throw new NotImplementedException();
+                    throw ex;
+                }
+                catch (Exception ex)
+                {
+                    throw ex;
                 }
             }
         }

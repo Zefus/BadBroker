@@ -28,7 +28,7 @@ namespace BadBroker.BusinessLogic.Services
 
                     DBService dBService = new DBService();
 
-                    //dates from DB db.QuotesData.Select(qd => qd.Date)
+                    //dates from DB
                     IEnumerable<DateTime> cachedDates = dates.Intersect(await dBService.SelectQuotes<QuotesData, DateTime>(qd => qd.Date));
                     //dates from API
                     IEnumerable<DateTime> apiDates = dates.Except(await dBService.SelectQuotes<QuotesData, DateTime>(qd => qd.Date));
