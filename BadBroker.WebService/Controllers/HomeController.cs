@@ -5,33 +5,32 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using BadBroker.WebService.Models;
+using BadBroker.BusinessLogic.Services;
+using BadBroker.BusinessLogic.ModelsDTO;
 
 namespace BadBroker.WebService.Controllers
 {
     public class HomeController : Controller
     {
+        [HttpGet]
         public IActionResult Index()
         {
             return View();
         }
 
-        public IActionResult About()
+        [HttpPost]
+        public async Task<IActionResult> Index(InputDTO inputDTO)
         {
-            ViewData["Message"] = "Your application description page.";
-
-            return View();
-        }
-
-        public IActionResult Contact()
-        {
-            ViewData["Message"] = "Your contact page.";
-
-            return View();
-        }
-
-        public IActionResult Privacy()
-        {
-            return View();
+            try
+            {
+                TradeService tradeService = new TradeService();
+                OutputDTO result = await tradeService.MakeTrade(inputDTO);
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                throw new NotImplementedException();
+            }
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

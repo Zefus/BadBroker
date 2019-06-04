@@ -10,4 +10,8 @@
     <PackageReference Include="Microsoft.AspNetCore.App" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\BadBroker.BusinessLogic\BadBroker.BusinessLogic.csproj" />
+  </ItemGroup>
+
 </Project>
