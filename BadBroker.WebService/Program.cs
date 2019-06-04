@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
-namespace BadBroker.WebApi
+namespace BadBroker.WebService
 {
     public class Program
     {
