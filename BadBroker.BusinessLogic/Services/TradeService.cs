@@ -43,23 +43,29 @@ namespace BadBroker.BusinessLogic.Services
                         cachedQuotes.Add(new QuotesDTO(quotesData.Source, quotesData.Date, quotesData.Quotes));
                     }
 
-                    HttpService httpService = new HttpService();
-                    //quotes from API
-                    List<QuotesDTO> apiQuotes = (await httpService.GetCurrencyRatesAsync(apiDates)).ToList();
-                    List<QuotesData> quotesForCashing = new List<QuotesData>();
+                    List<QuotesDTO> quotes = new List<QuotesDTO>();
 
-                    apiQuotes.ForEach(aQ =>
+                    if (apiDates.Count() != 0)
                     {
-                        QuotesData quotesData = new QuotesData();
-                        quotesData.Source = aQ.Source;
-                        quotesData.Date = aQ.Date;
-                        quotesData.Quotes = aQ.Quotes;
-                        quotesForCashing.Add(quotesData);
-                    });
+                        HttpService httpService = new HttpService();
+                        //quotes from API
+                        List<QuotesDTO> apiQuotes = (await httpService.GetCurrencyRatesAsync(apiDates)).ToList();
+                        List<QuotesData> quotesForCashing = new List<QuotesData>();
 
-                    await dBService.AddQuotesRange(quotesForCashing);
+                        apiQuotes.ForEach(aQ =>
+                        {
+                            QuotesData quotesData = new QuotesData();
+                            quotesData.Source = aQ.Source;
+                            quotesData.Date = aQ.Date;
+                            quotesData.Quotes = aQ.Quotes;
+                            quotesForCashing.Add(quotesData);
+                        });
 
-                    List<QuotesDTO> quotes = apiQuotes.Union(cachedQuotes).OrderBy(q => q.Date).ToList();
+                        await dBService.AddQuotesRange(quotesForCashing);
+                        quotes = apiQuotes.Union(cachedQuotes).OrderBy(q => q.Date).ToList();
+                    }
+
+                    quotes = cachedQuotes;
 
                     BestCaseSearcher bestCaseSearcher = new BestCaseSearcher();
                     OutputDTO bestCase = bestCaseSearcher.SearchBestCase(quotes);

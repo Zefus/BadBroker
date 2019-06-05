@@ -18,15 +18,8 @@ namespace BadBroker.Terminal
 
         static void Main(string[] args)
         {
-            string date = "2014-12-01";
 
-            string[] s = date.Split('-');
-
-            int year = Convert.ToInt32(s[0]);
-            int month = Convert.ToInt32(s[1]);
-            int day = Convert.ToInt32(s[2]);
-
-            //Task.Run(() => MainAsync(args));
+            Task.Run(() => MainAsync(args));
 
             Console.ReadKey();
         }
@@ -58,6 +51,14 @@ namespace BadBroker.Terminal
 
         static async void MainAsync(string[] args)
         {
+            EnumerateDaysBetweenDates enumerateDaysBetweenDates = new EnumerateDaysBetweenDates();
+
+            IEnumerable<DateTime> dates = enumerateDaysBetweenDates.Execute(new DateTime(2019, 04, 1), new DateTime(2019, 04, 30));
+
+            HttpService httpService = new HttpService();
+
+            List<QuotesDTO> quotes = (await httpService.GetCurrencyRatesAsync(dates)).ToList();
+
 
         }
     }

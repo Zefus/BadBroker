@@ -11,6 +11,7 @@
             "StartDate": startDate,
             "EndDate": endDate
         };
+        console.log(inputData);
 
         $.ajax({
             url: "/home/index",
@@ -20,9 +21,13 @@
             dataType: "json",
             success: function (response) {
                 console.log(response);
+                $('#currency').html("");
+                $('#buyDate').html("");
+                $('#sellDate').html("");
+                $('#revenueUSD').html("");
                 $('#currency').append(response.currency);
-                $('#buyDate').append(moment(response.BuyDate).format('DD[-]MM[-]YYYY'));
-                $('#sellDate').append(moment(response.SellDate).format('DD[-]MM[-]YYYY'));
+                $('#buyDate').append(moment(response.buyDate).format('DD[-]MM[-]YYYY'));
+                $('#sellDate').append(moment(response.sellDate).format('DD[-]MM[-]YYYY'));
                 $('#revenueUSD').append(response.revenue);
                 $('#results').css("visibility", "initial");
             }
