@@ -19,7 +19,7 @@ namespace BadBroker.WebService.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Index(InputDTO inputDTO)
+        public async Task<IActionResult> Index([FromBody] InputDTO inputDTO)
         {
             try
             {

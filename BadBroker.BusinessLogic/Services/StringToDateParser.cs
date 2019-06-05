@@ -8,11 +8,11 @@ namespace BadBroker.BusinessLogic.Services
     {
         public DateTime Parse(string date)
         {
-            string[] numbers = date.Split('-');
+            string[] numbers = date.Split('.');
 
-            int year = Convert.ToInt32(numbers[0]);
+            int day = Convert.ToInt32(numbers[0]);
             int month = Convert.ToInt32(numbers[1]);
-            int day = Convert.ToInt32(numbers[2]);
+            int year = Convert.ToInt32(numbers[2]);
 
             return new DateTime(year, month, day);
         }
