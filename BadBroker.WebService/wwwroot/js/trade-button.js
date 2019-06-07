@@ -21,7 +21,6 @@
             dataType: "json",
             success: function (response) {
                 console.log(response);
-                console.log(typeof(response.revenue));
                 $('#currency').html("");
                 $('#buyDate').html("");
                 $('#sellDate').html("");
