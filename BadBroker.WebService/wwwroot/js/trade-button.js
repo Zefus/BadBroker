@@ -21,6 +21,7 @@
             dataType: "json",
             success: function (response) {
                 console.log(response);
+                console.log(typeof(response.revenue));
                 $('#currency').html("");
                 $('#buyDate').html("");
                 $('#sellDate').html("");
@@ -28,7 +29,7 @@
                 $('#currency').append(response.currency);
                 $('#buyDate').append(moment(response.buyDate).format('DD[-]MM[-]YYYY'));
                 $('#sellDate').append(moment(response.sellDate).format('DD[-]MM[-]YYYY'));
-                $('#revenueUSD').append(response.revenue);
+                $('#revenueUSD').append(response.revenue.toFixed(3));
                 $('#results').css("visibility", "initial");
             }
         });

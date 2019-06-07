@@ -15,7 +15,7 @@ namespace BadBroker.DataAccess.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "2.2.4-servicing-10062")
+                .HasAnnotation("ProductVersion", "2.1.3-rtm-32065")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
@@ -29,8 +29,6 @@ namespace BadBroker.DataAccess.Migrations
 
                     b.Property<string>("QuotesJson")
                         .HasColumnName("Rates");
-
-                    b.Property<string>("Source");
 
                     b.HasKey("Id");
 

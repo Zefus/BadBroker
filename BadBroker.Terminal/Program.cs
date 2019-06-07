@@ -39,7 +39,6 @@ namespace BadBroker.Terminal
                 {
                     QuotesData quotesData = new QuotesData();
                     quotesData.Date = qD.Date;
-                    quotesData.Source = qD.Source;
                     quotesData.Quotes = qD.Quotes;
                     quotesDatas.Add(quotesData);
                 });

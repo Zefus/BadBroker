@@ -40,7 +40,7 @@ namespace BadBroker.BusinessLogic.Services
 
                     foreach (QuotesData quotesData in quotesDatas)
                     {
-                        cachedQuotes.Add(new QuotesDTO(quotesData.Source, quotesData.Date, quotesData.Quotes));
+                        cachedQuotes.Add(new QuotesDTO(quotesData.Date, quotesData.Quotes));
                     }
 
                     List<QuotesDTO> quotes = new List<QuotesDTO>();
@@ -55,7 +55,6 @@ namespace BadBroker.BusinessLogic.Services
                         apiQuotes.ForEach(aQ =>
                         {
                             QuotesData quotesData = new QuotesData();
-                            quotesData.Source = aQ.Source;
                             quotesData.Date = aQ.Date;
                             quotesData.Quotes = aQ.Quotes;
                             quotesForCashing.Add(quotesData);
@@ -64,11 +63,13 @@ namespace BadBroker.BusinessLogic.Services
                         await dBService.AddQuotesRange(quotesForCashing);
                         quotes = apiQuotes.Union(cachedQuotes).OrderBy(q => q.Date).ToList();
                     }
-
-                    quotes = cachedQuotes;
+                    else
+                    {
+                        quotes = cachedQuotes;
+                    }
 
                     BestCaseSearcher bestCaseSearcher = new BestCaseSearcher();
-                    OutputDTO bestCase = bestCaseSearcher.SearchBestCase(quotes);
+                    OutputDTO bestCase = bestCaseSearcher.SearchBestCase(quotes.OrderBy(q => q.Date).ToList());
                     return bestCase;
                 }
             }

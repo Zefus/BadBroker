@@ -10,14 +10,14 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BadBroker.DataAccess.Migrations
 {
     [DbContext(typeof(BadBrokerContext))]
-    [Migration("20190520090728_InitialMigration")]
-    partial class InitialMigration
+    [Migration("20190607035435_initial migration")]
+    partial class initialmigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "2.2.4-servicing-10062")
+                .HasAnnotation("ProductVersion", "2.1.3-rtm-32065")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
@@ -31,8 +31,6 @@ namespace BadBroker.DataAccess.Migrations
 
                     b.Property<string>("QuotesJson")
                         .HasColumnName("Rates");
-
-                    b.Property<string>("Source");
 
                     b.HasKey("Id");
 

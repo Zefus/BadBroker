@@ -16,7 +16,6 @@ namespace BadBroker.BusinessLogic.Services
                 decimal score = 100;
                 List<string> sources = new List<string> { "RUB", "EUR", "GBP", "JPY" };
                 List<OutputDTO> resultsForSource = new List<OutputDTO>();
-                List<OutputDTO> wrong = new List<OutputDTO>();
 
                 foreach (string source in sources)
                 {
@@ -35,8 +34,6 @@ namespace BadBroker.BusinessLogic.Services
                             decimal benefit = revenue - score;
                             OutputDTO outputDTO = new OutputDTO(buyDate, sellDate, source, benefit, revenue);
                             revenues.Add(outputDTO);
-                            if (buyDate > sellDate)
-                                wrong.Add(outputDTO);
                         }
                         index++;
                     }
@@ -46,10 +43,7 @@ namespace BadBroker.BusinessLogic.Services
                 OutputDTO result = resultsForSource.Find(r => r.Revenue == resultsForSource.Max(rev => rev.Revenue));
 
                 return result;
-            }
-            catch (NullReferenceException ex)
-            {
-                throw ex;
+
             }
             catch (Exception ex)
             {

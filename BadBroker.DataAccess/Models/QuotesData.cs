@@ -10,7 +10,6 @@ namespace BadBroker.DataAccess.Models
     {
         public int Id { get; set; }
         public DateTime Date { get; set; }
-        public string Source { get; set; }
         [NotMapped]
         public Dictionary<string, decimal> Quotes { get; set; }
         [Column("Rates")]
