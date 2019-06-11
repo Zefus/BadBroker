@@ -52,13 +52,41 @@ namespace BadBroker.Terminal
         {
             EnumerateDaysBetweenDates enumerateDaysBetweenDates = new EnumerateDaysBetweenDates();
 
-            IEnumerable<DateTime> dates = enumerateDaysBetweenDates.Execute(new DateTime(2019, 04, 1), new DateTime(2019, 04, 30));
+            IEnumerable<DateTime> dates = enumerateDaysBetweenDates.Execute(new DateTime(2019, 04, 1), new DateTime(2019, 05, 15));
 
             HttpService httpService = new HttpService();
 
             List<QuotesDTO> quotes = (await httpService.GetCurrencyRatesAsync(dates)).ToList();
 
+            OutputDTO outputDTO = BestCase(quotes);
+        }
 
+        public static OutputDTO BestCase(IList<QuotesDTO> quotesDTO)
+        {
+            decimal score = 100;
+            List<string> sources = new List<string> { "RUB", "EUR", "GBP", "JPY" };
+            OutputDTO result = new OutputDTO();
+            foreach (string source in sources)
+            {
+                int index = 0;
+                int lastElement = quotesDTO.Count;
+                while (index != lastElement)
+                {
+                    for (int i = index; i < lastElement; i++)
+                    {
+                        DateTime buyDate = quotesDTO[index].Date;
+                        DateTime sellDate = quotesDTO[i].Date;
+                        decimal revenue = quotesDTO[index].Quotes[$"USD{source}"] * score
+                            / quotesDTO[i].Quotes[$"USD{source}"] - (quotesDTO[i].Date.Subtract(quotesDTO[index].Date).Days);
+                        decimal benefit = revenue - score;
+                        OutputDTO outputDTO = new OutputDTO(buyDate, sellDate, source, benefit, revenue);
+                        if (outputDTO.Revenue > result.Revenue)
+                            result = outputDTO;
+                    }
+                    index++;
+                }
+            }
+            return result;
         }
     }
 }

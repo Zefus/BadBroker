@@ -15,14 +15,11 @@ namespace BadBroker.BusinessLogic.Services
             {
                 decimal score = 100;
                 List<string> sources = new List<string> { "RUB", "EUR", "GBP", "JPY" };
-                //List<OutputDTO> resultsForSource = new List<OutputDTO>();
-                List<OutputDTO> revenues = new List<OutputDTO>();
+                OutputDTO result = new OutputDTO();
                 foreach (string source in sources)
                 {
                     int index = 0;
                     int lastElement = quotesDTO.Count;
-                    //List<OutputDTO> revenues = new List<OutputDTO>();
-
                     while (index != lastElement)
                     {
                         for (int i = index; i < lastElement; i++)
@@ -33,17 +30,13 @@ namespace BadBroker.BusinessLogic.Services
                                 / quotesDTO[i].Quotes[$"USD{source}"] - (quotesDTO[i].Date.Subtract(quotesDTO[index].Date).Days);
                             decimal benefit = revenue - score;
                             OutputDTO outputDTO = new OutputDTO(buyDate, sellDate, source, benefit, revenue);
-                            revenues.Add(outputDTO);
+                            if (outputDTO.Revenue > result.Revenue)
+                                result = outputDTO;
                         }
                         index++;
                     }
-                    //OutputDTO resultForSource = revenues.Find(r => r.Revenue == revenues.Max(rev => rev.Revenue));
-                    //resultsForSource.Add(resultForSource);
                 }
-                OutputDTO result = revenues.Find(r => r.Revenue == revenues.Max(rev => rev.Revenue));
-
                 return result;
-
             }
             catch (Exception ex)
             {
