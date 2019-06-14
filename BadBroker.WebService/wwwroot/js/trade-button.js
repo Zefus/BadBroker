@@ -7,7 +7,10 @@
         var startDate = $('#startDate input').val();
         var endDate = $('#endDate input').val();
 
-        var inputData = {
+        if (startDate === "" || endDate === "") {
+            $('#modal').modal('show');
+        } else {
+            var inputData = {
             "StartDate": startDate,
             "EndDate": endDate
         };
@@ -32,5 +35,6 @@
                 $('#results').css("visibility", "initial");
             }
         });
+        }
     });
 });
