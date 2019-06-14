@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using BadBroker.WebService.Models;
 using BadBroker.BusinessLogic.Services;
 using BadBroker.BusinessLogic.ModelsDTO;
+using BadBroker.WebService.Validation;
 
 namespace BadBroker.WebService.Controllers
 {
@@ -21,9 +22,17 @@ namespace BadBroker.WebService.Controllers
         {
             try
             {
-                TradeService tradeService = new TradeService();
-                OutputDTO result = await tradeService.MakeTrade(inputDTO);
-                return Json(result);
+                ValidationModel validationModel = new ValidationModel();
+                if (validationModel.Validate(inputDTO))
+                {
+                    TradeService tradeService = new TradeService();
+                    OutputDTO result = await tradeService.MakeTrade(inputDTO);
+                    return Json(result);
+                }
+                else
+                {
+                    return BadRequest();
+                }
             }
             catch (Exception ex)
             {
