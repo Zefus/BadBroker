@@ -16,7 +16,7 @@ namespace BadBroker.WebService.Validation
             DateTime startDate = stringToDateParser.Parse(inputDTO.StartDate);
             DateTime endDate = stringToDateParser.Parse(inputDTO.EndDate);
 
-            if (startDate == null || endDate == null || startDate < endDate)
+            if (startDate == null || endDate == null || startDate > endDate)
             {
                 return false;
             }

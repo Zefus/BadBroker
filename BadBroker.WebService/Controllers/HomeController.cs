@@ -20,24 +20,18 @@ namespace BadBroker.WebService.Controllers
         [HttpPost]
         public async Task<IActionResult> Index([FromBody] InputDTO inputDTO)
         {
-            try
+            ValidationModel validationModel = new ValidationModel();
+            if (validationModel.Validate(inputDTO))
             {
-                ValidationModel validationModel = new ValidationModel();
-                if (validationModel.Validate(inputDTO))
-                {
-                    TradeService tradeService = new TradeService();
-                    OutputDTO result = await tradeService.MakeTrade(inputDTO);
-                    return Json(result);
-                }
-                else
-                {
-                    return BadRequest();
-                }
+                TradeService tradeService = new TradeService();
+                OutputDTO result = await tradeService.MakeTrade(inputDTO);
+                return Json(result);
             }
-            catch (Exception ex)
+            else
             {
-                throw new NotImplementedException();
+                return BadRequest();
             }
+            
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

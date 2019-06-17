@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using BadBroker.BusinessLogic.ModelsDTO;
 using BadBroker.BusinessLogic.Interfaces;
 using BadBroker.BusinessLogic.Extensions;
+using BadBroker.BusinessLogic.Exceptions;
 using Newtonsoft.Json;
 
 namespace BadBroker.BusinessLogic.Services
@@ -15,30 +16,31 @@ namespace BadBroker.BusinessLogic.Services
 
         public async Task<IEnumerable<QuotesDTO>> GetCurrencyRatesAsync(IEnumerable<DateTime> dates)
         {
-            List<QuotesDTO> quotes = new List<QuotesDTO>();
-
-            using (HttpClient client = new HttpClient())
+            try
             {
-                try
+                List<QuotesDTO> quotes = new List<QuotesDTO>();
+
+                HttpResponseMessage response;
+
+                using (HttpClient client = new HttpClient())
                 {
                     foreach (DateTime date in dates)
                     {
-                        HttpResponseMessage response = await client.GetAsync($"http://apilayer.net/api/historical?access_key={ACCESS_KEY}&date={date.ToApiStringFormat()}&currencies=RUB,EUR,GBP,JPY&format=1");
+                        response = await client.GetAsync($"http://apilayer.net/api/historical?access_key={ACCESS_KEY}&date={date.ToApiStringFormat()}&currencies=RUB,EUR,GBP,JPY&format=1");
                         response.EnsureSuccessStatusCode();
                         string responseBody = await response.Content.ReadAsStringAsync();
                         QuotesDTO result = JsonConvert.DeserializeObject<QuotesDTO>(responseBody);
-                        quotes.Add(result);
+                        if (result.Success)
+                            quotes.Add(result);
+                        else
+                            throw new HttpServiceException($"API error. Status code: {result.Error.Code}. Info: {result.Error.Info}");
                     }
                     return quotes;
                 }
-                catch (HttpRequestException ex)
-                {
-                    throw ex;
-                }
-                catch (Exception ex)
-                {
-                    throw ex;
-                }
+            }
+            catch (HttpRequestException ex)
+            {
+                throw new HttpServiceException(ex.Message, ex);
             }
         }
     }

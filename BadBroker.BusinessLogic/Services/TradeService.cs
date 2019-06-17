@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Linq;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 using BadBroker.BusinessLogic.Interfaces;
 using BadBroker.BusinessLogic.ModelsDTO;
 using BadBroker.DataAccess;
 using BadBroker.DataAccess.Models;
+using BadBroker.BusinessLogic.Exceptions;
 
 namespace BadBroker.BusinessLogic.Services
 {
@@ -73,9 +73,9 @@ namespace BadBroker.BusinessLogic.Services
                     return bestCase;
                 }
             }
-            catch (Exception e)
+            catch (HttpServiceException ex)
             {
-                throw new NotImplementedException();
+                throw ex;
             }
         }
     }
