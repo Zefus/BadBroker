@@ -2,12 +2,13 @@
 using System.Linq;
 using System.Linq.Expressions;
 using System.Collections.Generic;
-using System.Text;
+using System.Data.SqlClient;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using BadBroker.BusinessLogic.Interfaces;
-using BadBroker.DataAccess.Models;
 using BadBroker.DataAccess;
+using BadBroker.BusinessLogic.Exceptions;
+using BadBroker.DataAccess.Models;
 
 namespace BadBroker.BusinessLogic.Services
 {
@@ -24,9 +25,9 @@ namespace BadBroker.BusinessLogic.Services
                     return await query.ToListAsync().ConfigureAwait(false);
                 }
             }
-            catch (Exception ex)
+            catch (SqlException ex)
             {
-                throw ex;
+                throw new DBServiceException(ex.Message, ex);
             }
         }
 
@@ -41,9 +42,9 @@ namespace BadBroker.BusinessLogic.Services
                     return await query.ToListAsync().ConfigureAwait(false);
                 }
             }
-            catch (Exception ex)
+            catch (SqlException ex)
             {
-                throw ex;
+                throw new DBServiceException(ex.Message, ex);
             }
         }
 
@@ -59,13 +60,41 @@ namespace BadBroker.BusinessLogic.Services
                     return Task.FromResult(1);
                 }
             }
+            catch(SqlException ex)
+            {
+                throw new DBServiceException(ex.Message, ex);
+            }
+            catch (DbUpdateConcurrencyException ex)
+            {
+                foreach (var entry in ex.Entries)
+                {
+                    if (entry.Entity is QuotesData)
+                    {
+                        var proposedValues = entry.CurrentValues;
+                        var databaseValues = entry.GetDatabaseValues();
+
+                        foreach (var property in proposedValues.Properties)
+                        {
+                            var proposedValue = proposedValues[property];
+                            var databaseValue = databaseValues[property];
+
+                            proposedValues[property] = databaseValue;
+                        }
+
+                        entry.OriginalValues.SetValues(databaseValues);
+                    }
+                    else
+                    {
+                        throw new NotSupportedException(
+                            "Don't know how to handle concurrency conflicts for "
+                            + entry.Metadata.Name);
+                    }
+                }
+                return Task.FromResult(1);
+            }
             catch (DbUpdateException ex)
             {
-                throw ex;
-            }
-            catch (Exception ex)
-            {
-                throw ex;
+                throw new DBServiceException(ex.Message, ex);
             }
         }
     }
