@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace BadBroker.BusinessLogic.Services
 {
@@ -8,6 +6,9 @@ namespace BadBroker.BusinessLogic.Services
     {
         public DateTime Parse(string date)
         {
+            if (date == null || date == "")
+                throw new ArgumentNullException($"Patameter {nameof(date)} cannot be null or empty", nameof(date));
+
             string[] numbers = date.Split('.');
 
             int day = Convert.ToInt32(numbers[0]);
