@@ -14,6 +14,11 @@ namespace BadBroker.BusinessLogic.Services
     {
         private const string ACCESS_KEY = "c322dc640d70be2026e7ae22dd41417c";
 
+        /// <summary>
+        /// Method return data about currency rates from apilayer.net by API service.
+        /// </summary>
+        /// <param name="dates">Dates on which currency data will be received</param>
+        /// <returns>Return the collection of currency data</returns>
         public async Task<IEnumerable<QuotesDTO>> GetCurrencyRatesAsync(IEnumerable<DateTime> dates)
         {
             try
