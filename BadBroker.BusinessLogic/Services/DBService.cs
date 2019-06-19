@@ -14,6 +14,12 @@ namespace BadBroker.BusinessLogic.Services
 {
     public class DBService : IDBService
     {
+        /// <summary>
+        /// Method that returns a collection of QuotesData objects filtered by predicate.
+        /// </summary>
+        /// <typeparam name="TEntity">Return type</typeparam>
+        /// <param name="predicate">Predicate on which data is filtered</param>
+        /// <returns>Filtered collection QuotesData objects</returns>
         public async Task<IEnumerable<TEntity>> GetQuotes<TEntity>(Expression<Func<TEntity, bool>> predicate)
             where TEntity : class
         {
@@ -31,6 +37,13 @@ namespace BadBroker.BusinessLogic.Services
             }
         }
 
+        /// <summary>
+        /// Method that returns a collection of QuotesData objects selected by key selector.
+        /// </summary>
+        /// <typeparam name="TEntity">Source type</typeparam>
+        /// <typeparam name="TResult">Return type</typeparam>
+        /// <param name="selector">Key on which data is selected</param>
+        /// <returns></returns>
         public async Task<IEnumerable<TResult>> SelectQuotes<TEntity, TResult>(Expression<Func<TEntity, TResult>> selector)
             where TEntity : class
         {
@@ -48,7 +61,13 @@ namespace BadBroker.BusinessLogic.Services
             }
         }
 
-        public Task AddQuotesRange<TEntity>(IEnumerable<TEntity> entities) 
+        /// <summary>
+        /// Method that save QuotesData objects to database.
+        /// </summary>
+        /// <typeparam name="TEntity">Type of stored object</typeparam>
+        /// <param name="entities">Entities to store in database</param>
+        /// <returns></returns>
+        public Task AddQuotesRange<TEntity>(IEnumerable<TEntity> entities)
             where TEntity : class
         {
             try
