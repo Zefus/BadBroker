@@ -1,11 +1,9 @@
-﻿using System;
-using System.Diagnostics;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using BadBroker.WebService.Models;
 using BadBroker.BusinessLogic.Services;
 using BadBroker.BusinessLogic.ModelsDTO;
 using BadBroker.WebService.Validation;
+using BadBroker.BusinessLogic.Exceptions;
 
 namespace BadBroker.WebService.Controllers
 {
@@ -20,24 +18,29 @@ namespace BadBroker.WebService.Controllers
         [HttpPost]
         public async Task<IActionResult> Index([FromBody] InputDTO inputDTO)
         {
-            ValidationModel validationModel = new ValidationModel();
-            if (validationModel.Validate(inputDTO))
+            try
             {
-                TradeService tradeService = new TradeService();
-                OutputDTO result = await tradeService.MakeTrade(inputDTO);
-                return Json(result);
+                ValidationModel validationModel = new ValidationModel();
+                if (validationModel.Validate(inputDTO))
+                {
+                    TradeService tradeService = new TradeService();
+                    OutputDTO result = await tradeService.MakeTrade(inputDTO);
+                    return Json(new { Success = true, result});
+                }
+                else
+                {
+                    return BadRequest();
+                }
             }
-            else
+            catch (TradeServiceException ex)
             {
-                return BadRequest();
+                return Json(new { Success = false, redirectUrl =  "/home/internalerror"});
             }
-            
         }
 
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
+        public IActionResult InternalError()
         {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            return View();
         }
     }
 }

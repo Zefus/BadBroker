@@ -12,6 +12,11 @@ namespace BadBroker.BusinessLogic.Services
 {
     public class TradeService : ITradeService
     {
+        /// <summary>
+        /// Method that implementation trade logic.
+        /// </summary>
+        /// <param name="inputDTO">Input DTO object that contains trade start date and end date</param>
+        /// <returns>Output DTO object that contains information about trade best case</returns>
         public async Task<OutputDTO> MakeTrade(InputDTO inputDTO)
         {
             try
@@ -28,12 +33,9 @@ namespace BadBroker.BusinessLogic.Services
 
                     DBService dBService = new DBService();
 
-                    //dates from DB
                     IEnumerable<DateTime> cachedDates = dates.Intersect(await dBService.SelectQuotes<QuotesData, DateTime>(qd => qd.Date));
-                    //dates from API
                     IEnumerable<DateTime> apiDates = dates.Except(await dBService.SelectQuotes<QuotesData, DateTime>(qd => qd.Date));
 
-                    //quotes from DB
                     List<QuotesDTO> cachedQuotes = new List<QuotesDTO>();
 
                     IEnumerable<QuotesData> quotesDatas = await dBService.GetQuotes<QuotesData>(qd => cachedDates.Contains(qd.Date));
@@ -48,7 +50,6 @@ namespace BadBroker.BusinessLogic.Services
                     if (apiDates.Count() != 0)
                     {
                         HttpService httpService = new HttpService();
-                        //quotes from API
                         List<QuotesDTO> apiQuotes = (await httpService.GetCurrencyRatesAsync(apiDates)).ToList();
                         List<QuotesData> quotesForCashing = new List<QuotesData>();
 
@@ -73,9 +74,17 @@ namespace BadBroker.BusinessLogic.Services
                     return bestCase;
                 }
             }
+            catch (ArgumentNullException ex)
+            {
+                throw new TradeServiceException(ex.Message, ex);
+            }
+            catch (DBServiceException ex)
+            {
+                throw new TradeServiceException(ex.Message, ex);
+            }
             catch (HttpServiceException ex)
             {
-                throw ex;
+                throw new TradeServiceException(ex.Message, ex);
             }
         }
     }

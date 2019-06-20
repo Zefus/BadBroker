@@ -24,15 +24,19 @@
             dataType: "json",
             success: function (response) {
                 console.log(response);
-                $('#currency').html("");
-                $('#buyDate').html("");
-                $('#sellDate').html("");
-                $('#revenueUSD').html("");
-                $('#currency').append(response.currency);
-                $('#buyDate').append(moment(response.buyDate).format('DD[-]MM[-]YYYY'));
-                $('#sellDate').append(moment(response.sellDate).format('DD[-]MM[-]YYYY'));
-                $('#revenueUSD').append(response.revenue.toFixed(3));
-                $('#results').css("visibility", "initial");
+                if (response.success) {
+                    $('#currency').html("");
+                    $('#buyDate').html("");
+                    $('#sellDate').html("");
+                    $('#revenueUSD').html("");
+                    $('#currency').append(response.result.currency);
+                    $('#buyDate').append(moment(response.result.buyDate).format('DD[-]MM[-]YYYY'));
+                    $('#sellDate').append(moment(response.result.sellDate).format('DD[-]MM[-]YYYY'));
+                    $('#revenueUSD').append(response.result.revenue.toFixed(3));
+                    $('#results').css("visibility", "initial");
+                } else {
+                    location.href = response.redirectUrl;
+                }
             }
         });
         }
