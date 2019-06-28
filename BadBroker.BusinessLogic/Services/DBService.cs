@@ -14,6 +14,12 @@ namespace BadBroker.BusinessLogic.Services
 {
     public class DBService : IDBService
     {
+        private BadBrokerContext _context { get; }
+        public DBService(BadBrokerContext context)
+        {
+            _context = context;
+        }
+
         /// <summary>
         /// Method that returns a collection of QuotesData objects filtered by predicate.
         /// </summary>
@@ -25,11 +31,8 @@ namespace BadBroker.BusinessLogic.Services
         {
             try
             {
-                using (BadBrokerContext db = new BadBrokerContext())
-                {
-                    IQueryable<TEntity> query = db.Set<TEntity>().Where(predicate);
-                    return await query.ToListAsync().ConfigureAwait(false);
-                }
+                IQueryable<TEntity> query = _context.Set<TEntity>().Where(predicate);
+                return await query.ToListAsync().ConfigureAwait(false);
             }
             catch (SqlException ex)
             {
@@ -49,11 +52,8 @@ namespace BadBroker.BusinessLogic.Services
         {
             try
             {
-                using (BadBrokerContext db = new BadBrokerContext())
-                {
-                    IQueryable<TResult> query = db.Set<TEntity>().Select(selector);
-                    return await query.ToListAsync().ConfigureAwait(false);
-                }
+                IQueryable<TResult> query = _context.Set<TEntity>().Select(selector);
+                return await query.ToListAsync().ConfigureAwait(false);
             }
             catch (SqlException ex)
             {
@@ -72,12 +72,9 @@ namespace BadBroker.BusinessLogic.Services
         {
             try
             {
-                using (BadBrokerContext db = new BadBrokerContext())
-                {
-                    db.AddRange(entities);
-                    db.SaveChanges();
-                    return Task.FromResult(1);
-                }
+                _context.AddRange(entities);
+                _context.SaveChanges();
+                return Task.FromResult(1);
             }
             catch(SqlException ex)
             {

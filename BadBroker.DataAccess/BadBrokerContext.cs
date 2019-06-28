@@ -12,11 +12,8 @@ namespace BadBroker.DataAccess
 {
     public class BadBrokerContext : DbContext
     {
-        public DbSet<QuotesData> QuotesData { get; set; }
+        public BadBrokerContext(DbContextOptions<BadBrokerContext> options) : base(options) { }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            optionsBuilder.UseSqlServer(@"Server=IT-REZERV\SQLEXPRESS01;Database=badbrokerdb;Trusted_Connection=True;");
-        }
+        public DbSet<QuotesData> QuotesData { get; set; }
     }
 }

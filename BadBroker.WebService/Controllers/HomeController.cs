@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using BadBroker.BusinessLogic.Services;
+using BadBroker.BusinessLogic.Interfaces;
 using BadBroker.BusinessLogic.ModelsDTO;
 using BadBroker.WebService.Validation;
 using BadBroker.BusinessLogic.Exceptions;
@@ -9,6 +9,12 @@ namespace BadBroker.WebService.Controllers
 {
     public class HomeController : Controller
     {
+        public ITradeService _tradeService { get; set; }
+        public HomeController(ITradeService tradeService)
+        {
+            _tradeService = tradeService;
+        }
+
         [HttpGet]
         public IActionResult Index()
         {
@@ -23,8 +29,7 @@ namespace BadBroker.WebService.Controllers
                 ValidationModel validationModel = new ValidationModel();
                 if (validationModel.Validate(inputDTO))
                 {
-                    TradeService tradeService = new TradeService();
-                    OutputDTO result = await tradeService.MakeTrade(inputDTO);
+                    OutputDTO result = await _tradeService.MakeTrade(inputDTO);
                     return Json(new { Success = true, result});
                 }
                 else

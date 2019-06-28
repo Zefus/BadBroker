@@ -13,6 +13,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\BadBroker.BusinessLogic\BadBroker.BusinessLogic.csproj" />
+    <ProjectReference Include="..\BadBroker.DataAccess\BadBroker.DataAccess.csproj" />
   </ItemGroup>
 
 </Project>

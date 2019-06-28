@@ -24,29 +24,29 @@ namespace BadBroker.Terminal
             Console.ReadKey();
         }
 
-        public async static void FakeData()
-        {
-            using (BadBrokerContext badBrokerContext = new BadBrokerContext())
-            {
-                EnumerateDaysBetweenDates enumerateDaysBetweenDates = new EnumerateDaysBetweenDates();
-                IEnumerable<DateTime> dates = enumerateDaysBetweenDates.Execute(new DateTime(2014, 12, 1), new DateTime(2014, 12, 15));
-                HttpService httpService = new HttpService();
-                List<QuotesDTO> quotesDTO = (await httpService.GetCurrencyRatesAsync(dates)).ToList();
+        //public async static void FakeData()
+        //{
+        //    using (BadBrokerContext badBrokerContext = new BadBrokerContext())
+        //    {
+        //        EnumerateDaysBetweenDates enumerateDaysBetweenDates = new EnumerateDaysBetweenDates();
+        //        IEnumerable<DateTime> dates = enumerateDaysBetweenDates.Execute(new DateTime(2014, 12, 1), new DateTime(2014, 12, 15));
+        //        HttpService httpService = new HttpService();
+        //        List<QuotesDTO> quotesDTO = (await httpService.GetCurrencyRatesAsync(dates)).ToList();
 
-                List<QuotesData> quotesDatas = new List<QuotesData>();
+        //        List<QuotesData> quotesDatas = new List<QuotesData>();
 
-                quotesDTO.ForEach(qD => 
-                {
-                    QuotesData quotesData = new QuotesData();
-                    quotesData.Date = qD.Date;
-                    quotesData.Quotes = qD.Quotes;
-                    quotesDatas.Add(quotesData);
-                });
+        //        quotesDTO.ForEach(qD => 
+        //        {
+        //            QuotesData quotesData = new QuotesData();
+        //            quotesData.Date = qD.Date;
+        //            quotesData.Quotes = qD.Quotes;
+        //            quotesDatas.Add(quotesData);
+        //        });
 
-                await badBrokerContext.AddRangeAsync(quotesDatas);
-                await badBrokerContext.SaveChangesAsync();
-            }
-        }
+        //        await badBrokerContext.AddRangeAsync(quotesDatas);
+        //        await badBrokerContext.SaveChangesAsync();
+        //    }
+        //}
 
         static async void MainAsync(string[] args)
         {

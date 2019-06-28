@@ -12,7 +12,7 @@ namespace BadBroker.BusinessLogic.Services
 {
     public class HttpService : IHttpService
     {
-        private const string ACCESS_KEY = "c322dc640d70be2026e7ae22dd41417c";
+        private string ACCESS_KEY = "c322dc640d70be2026e7ae22dd41417c";
 
         /// <summary>
         /// Method return data about currency rates from apilayer.net by API service.
