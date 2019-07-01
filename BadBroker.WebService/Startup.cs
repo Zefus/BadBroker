@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -38,6 +34,7 @@ namespace BadBroker.WebService
 
             services
                 .AddScoped<IDBService, DBService>()
+                .AddScoped<IHttpService, HttpService>()
                 .AddScoped<ITradeService, TradeService>();
 
             services.Configure<CookiePolicyOptions>(options =>
@@ -56,13 +53,14 @@ namespace BadBroker.WebService
         {
             context.Database.Migrate();
 
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
             }
             else
             {
-                app.UseExceptionHandler("/Home/Error");
+                app.UseExceptionHandler("/Home/InternalError");
                 app.UseHsts();
             }
 
