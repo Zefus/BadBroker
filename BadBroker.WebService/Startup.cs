@@ -44,7 +44,6 @@ namespace BadBroker.WebService
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
 
-
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }
 
@@ -52,7 +51,6 @@ namespace BadBroker.WebService
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, BadBrokerContext context)
         {
             context.Database.Migrate();
-
 
             if (env.IsDevelopment())
             {
