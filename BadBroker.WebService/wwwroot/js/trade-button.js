@@ -1,7 +1,19 @@
 ﻿$(function () {
     $('#startDate').datetimepicker({ pickTime: false, language: 'ru' });
+    $('#endDate').datetimepicker({ pickTime: false, useCurrent: false, language: 'ru' });
 
-    $('#endDate').datetimepicker({ pickTime: false, language: 'ru' });
+    $('#startDate').data("DateTimePicker").setMinDate(new Date(1998, 12, 1));
+    $('#startDate').data("DateTimePicker").setMaxDate(new Date(Date()));
+    $('#startDate').on("dp.change", function (e) {
+        $('#endDate').data("DateTimePicker").setMinDate(e.date);
+    });
+
+    $('#endDate').data("DateTimePicker").setMinDate(new Date(1998, 12, 1));
+    $('#endDate').data("DateTimePicker").setMaxDate(new Date(Date()));
+    $('#endDate').on("dp.change", function (e) {
+        $('#startDate').data("DateTimePicker").setMaxDate(e.date);
+    });
+
 
     $('#trade').click(function (e) {
         var startDate = $('#startDate input').val();

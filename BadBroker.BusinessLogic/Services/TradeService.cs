@@ -11,10 +11,18 @@ namespace BadBroker.BusinessLogic.Services
 {
     public class TradeService : ITradeService
     {
+        private IStringToDateParser _stringToDateParser;
+        private IEnumerateDaysBetweenDates _enumerateDaysBetweenDates;
         private IDBService _dBService;
         private IHttpService _httpService;
-        public TradeService(IDBService dBService, IHttpService httpService)
+
+        public TradeService(IStringToDateParser        stringToDateParser, 
+                            IEnumerateDaysBetweenDates enumerateDaysBetweenDates, 
+                            IDBService                 dBService, 
+                            IHttpService               httpService)
         {
+            _stringToDateParser = stringToDateParser;
+            _enumerateDaysBetweenDates = enumerateDaysBetweenDates;
             _dBService = dBService;
             _httpService = httpService;
         }
@@ -28,24 +36,46 @@ namespace BadBroker.BusinessLogic.Services
         {
             try
             {
-                StringToDateParser stringToDateParser = new StringToDateParser();
+                if (_stringToDateParser == null)
+                {
+                    throw new NullReferenceException("_stringToDateParser field is null");
+                }
 
-                DateTime startDate = stringToDateParser.Parse(inputDTO.StartDate);
-                DateTime endDate = stringToDateParser.Parse(inputDTO.EndDate);
+                if (_enumerateDaysBetweenDates == null)
+                {
+                    throw new NullReferenceException("_enumerateDaysBetweenDates field is null");
+                }
 
-                EnumerateDaysBetweenDates enumerateDaysBetweenDates = new EnumerateDaysBetweenDates();
-                IEnumerable<DateTime> dates = enumerateDaysBetweenDates.Execute(startDate, endDate);
+                if (_httpService == null)
+                {
+                    throw new NullReferenceException("_httpService field is null");
+                }
+
+                if (_dBService == null)
+                {
+                    throw new NullReferenceException("_dBService field is null");
+                }
+
+                DateTime startDate = _stringToDateParser.Parse(inputDTO.StartDate);
+                DateTime endDate = _stringToDateParser.Parse(inputDTO.EndDate);
+
+                IEnumerable<DateTime> dates = _enumerateDaysBetweenDates.Execute(startDate, endDate);
 
                 IEnumerable<DateTime> cachedDates = dates.Intersect(await _dBService.SelectQuotes<QuotesData, DateTime>(qd => qd.Date));
                 IEnumerable<DateTime> apiDates = dates.Except(await _dBService.SelectQuotes<QuotesData, DateTime>(qd => qd.Date));
 
                 List<QuotesDTO> cachedQuotes = new List<QuotesDTO>();
 
-                IEnumerable<QuotesData> quotesDatas = await _dBService.GetQuotes<QuotesData>(qd => cachedDates.Contains(qd.Date));
+                IEnumerable<QuotesData> quotesDatas;
 
-                foreach (QuotesData quotesData in quotesDatas)
+                if (cachedDates.Count() != 0)
                 {
-                    cachedQuotes.Add(new QuotesDTO(quotesData.Date, quotesData.Quotes));
+                    quotesDatas = await _dBService.GetQuotes<QuotesData>(qd => cachedDates.Contains(qd.Date));
+
+                    foreach (QuotesData quotesData in quotesDatas)
+                    {
+                        cachedQuotes.Add(new QuotesDTO(quotesData.Date, quotesData.Quotes));
+                    }
                 }
 
                 List<QuotesDTO> quotes = new List<QuotesDTO>();
@@ -75,6 +105,10 @@ namespace BadBroker.BusinessLogic.Services
                 OutputDTO bestCase = bestCaseSearcher.SearchBestCase(quotes.OrderBy(q => q.Date).ToList());
                 return bestCase;
             }
+            catch (NullReferenceException ex)
+            {
+                throw new TradeServiceException(ex.Message, ex);
+            }
             catch (ArgumentNullException ex)
             {
                 throw new TradeServiceException(ex.Message, ex);
@@ -87,6 +121,10 @@ namespace BadBroker.BusinessLogic.Services
             {
                 throw new TradeServiceException(ex.Message, ex);
             }
+            catch (Exception ex)
+            {
+                throw new TradeServiceException(ex.Message, ex);
+            } 
         }
     }
 }

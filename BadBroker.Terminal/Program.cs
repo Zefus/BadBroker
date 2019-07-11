@@ -18,8 +18,9 @@ namespace BadBroker.Terminal
 
         static void Main(string[] args)
         {
+            StringToDateParser stringToDateParser = new StringToDateParser();
 
-            Task.Run(() => MainAsync(args));
+            DateTime date = stringToDateParser.Parse("05*02*2019");
 
             Console.ReadKey();
         }

@@ -33,6 +33,8 @@ namespace BadBroker.WebService
             services.AddDbContext<BadBrokerContext>(opt => opt.UseSqlServer(Configuration.GetConnectionString("Db")));
 
             services
+                .AddScoped<IStringToDateParser, StringToDateParser>()
+                .AddScoped<IEnumerateDaysBetweenDates, EnumerateDaysBetweenDates>()
                 .AddScoped<IDBService, DBService>()
                 .AddScoped<IHttpService, HttpService>()
                 .AddScoped<ITradeService, TradeService>();

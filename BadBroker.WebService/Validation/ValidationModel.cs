@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using BadBroker.BusinessLogic.ModelsDTO;
 using BadBroker.BusinessLogic.Services;
 
@@ -16,10 +13,29 @@ namespace BadBroker.WebService.Validation
             DateTime startDate = stringToDateParser.Parse(inputDTO.StartDate);
             DateTime endDate = stringToDateParser.Parse(inputDTO.EndDate);
 
-            if (startDate == null || endDate == null || startDate > endDate)
-            {
+            if (inputDTO == null)
                 return false;
-            }
+
+            if (startDate == null)
+                return false;
+
+            if (endDate == null)
+                return false;
+
+            if (startDate > endDate)
+                return false;
+
+            if (startDate < new DateTime(2000, 1, 1))
+                return false;
+
+            if (startDate > DateTime.Now)
+                return false;
+
+            if (endDate < new DateTime(2000, 1, 1))
+                return false;
+
+            if (endDate > DateTime.Now)
+                return false;
 
             return true;
         }

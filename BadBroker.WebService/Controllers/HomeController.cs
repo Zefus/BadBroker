@@ -29,6 +29,9 @@ namespace BadBroker.WebService.Controllers
                 ValidationModel validationModel = new ValidationModel();
                 if (validationModel.Validate(inputDTO))
                 {
+                    if (_tradeService == null)
+                        throw new TradeServiceException("Property '_tradeService' is null");
+
                     OutputDTO result = await _tradeService.MakeTrade(inputDTO);
                     return Json(new { Success = true, result});
                 }
