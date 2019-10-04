@@ -10,16 +10,6 @@ namespace BadBroker.DataAccess.Models
     {
         public int Id { get; set; }
         public DateTime Date { get; set; }
-        [NotMapped]
-        public Dictionary<string, decimal> Quotes { get; set; }
-        [Column("Rates")]
-        public string QuotesJson
-        {
-            get => JsonConvert.SerializeObject(Quotes);
-            set
-            {
-                Quotes = JsonConvert.DeserializeObject<Dictionary<string, decimal>>(value);
-            }
-        }
+        public List<RatesPerDate> RatesPerDate { get; set; }
     }
 }

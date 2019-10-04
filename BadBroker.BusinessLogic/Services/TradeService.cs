@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using BadBroker.BusinessLogic.Interfaces;
 using BadBroker.BusinessLogic.ModelsDTO;
@@ -74,11 +75,15 @@ namespace BadBroker.BusinessLogic.Services
 
                 if (cachedDates.Count() != 0)
                 {
-                    quotesDatas = await _dBService.GetQuotes<QuotesData>(qd => cachedDates.Contains(qd.Date));
+                    quotesDatas = await _dBService.GetQuotes<QuotesData>(qd => cachedDates.Contains(qd.Date), CancellationToken.None, qd => qd.RatesPerDate);
 
                     foreach (QuotesData quotesData in quotesDatas)
                     {
-                        cachedQuotes.Add(new QuotesDTO(quotesData.Date, quotesData.Quotes));
+                        Dictionary<string, decimal> rates = new Dictionary<string, decimal>();
+
+                        quotesData.RatesPerDate.ForEach(rpd => rates.Add(rpd.Name, rpd.Rate));
+
+                        cachedQuotes.Add(new QuotesDTO(quotesData.Date, rates));
                     }
                 }
 

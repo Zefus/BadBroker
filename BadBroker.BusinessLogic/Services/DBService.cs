@@ -3,6 +3,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Collections.Generic;
 using System.Data.SqlClient;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using BadBroker.BusinessLogic.Interfaces;
@@ -24,15 +25,24 @@ namespace BadBroker.BusinessLogic.Services
         /// Method that returns a collection of QuotesData objects filtered by predicate.
         /// </summary>
         /// <typeparam name="TEntity">Return type</typeparam>
-        /// <param name="predicate">Predicate on which data is filtered</param>
+        /// <param name="predicate">Predicate by which data is filtered</param>
+        /// <param name="cancellationToken">Token of cancelled operation</param>
+        /// <param name="includes">Predicates by which eager load</param>
         /// <returns>Filtered collection QuotesData objects</returns>
-        public async Task<IEnumerable<TEntity>> GetQuotes<TEntity>(Expression<Func<TEntity, bool>> predicate)
+        public async Task<IEnumerable<TEntity>> GetQuotes<TEntity>(
+            Expression<Func<TEntity, bool>> predicate,
+            CancellationToken cancellationToken,
+            params Expression<Func<TEntity, object>>[] includes)
             where TEntity : class
         {
             try
             {
                 IQueryable<TEntity> query = _context.Set<TEntity>().Where(predicate);
-                return await query.ToListAsync().ConfigureAwait(false);
+                foreach (var include in includes)
+                {
+                    query = query.Include(include);
+                }
+                return await query.ToListAsync(cancellationToken).ConfigureAwait(false);
             }
             catch (SqlException ex)
             {
