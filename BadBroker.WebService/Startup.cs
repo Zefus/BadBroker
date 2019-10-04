@@ -37,6 +37,7 @@ namespace BadBroker.WebService
                 .AddScoped<IEnumerateDaysBetweenDates, EnumerateDaysBetweenDates>()
                 .AddScoped<IDBService, DBService>()
                 .AddScoped<IHttpService, HttpService>()
+                .AddScoped<IBestCaseSearcher, BestCaseSearcher>()
                 .AddScoped<ITradeService, TradeService>();
 
             services.Configure<CookiePolicyOptions>(options =>

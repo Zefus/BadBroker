@@ -12,11 +12,11 @@ namespace BadBroker.BusinessLogic.Services
         /// </summary>
         /// <param name="quotesDTO">Currency rates</param>
         /// <returns>Greatest revenue</returns>
-        public OutputDTO SearchBestCase(IList<QuotesDTO> quotesDTO)
+        public OutputDTO SearchBestCase(IList<QuotesDTO> quotesDTO, decimal score)
         {
             if (quotesDTO == null)
                 throw new ArgumentNullException($"Argument {nameof(quotesDTO)} is null. Method: SearchBestCase");
-            decimal score = 100;
+            //decimal score = 100;
             List<string> sources = new List<string> { "RUB", "EUR", "GBP", "JPY" };
             OutputDTO result = new OutputDTO();
             foreach (string source in sources)

@@ -18,13 +18,15 @@
     $('#trade').click(function (e) {
         var startDate = $('#startDate input').val();
         var endDate = $('#endDate input').val();
+        var score = $('#score').val();
 
         if (startDate === "" || endDate === "") {
             $('#modal').modal('show');
         } else {
             var inputData = {
             "StartDate": startDate,
-            "EndDate": endDate
+            "EndDate": endDate,
+            "Score": score
         };
         console.log(inputData);
 

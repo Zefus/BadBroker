@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using Xunit;
 
 namespace BadBroker.Tests
 {
-    class HttpServiceTests
+    public class HttpServiceTests
     {
+        
     }
 }

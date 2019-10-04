@@ -15,16 +15,19 @@ namespace BadBroker.BusinessLogic.Services
         private IEnumerateDaysBetweenDates _enumerateDaysBetweenDates;
         private IDBService _dBService;
         private IHttpService _httpService;
+        private IBestCaseSearcher _bestCaseSearcher;
 
         public TradeService(IStringToDateParser        stringToDateParser, 
                             IEnumerateDaysBetweenDates enumerateDaysBetweenDates, 
                             IDBService                 dBService, 
-                            IHttpService               httpService)
+                            IHttpService               httpService,
+                            IBestCaseSearcher          bestCaseSearcher)
         {
             _stringToDateParser = stringToDateParser;
             _enumerateDaysBetweenDates = enumerateDaysBetweenDates;
             _dBService = dBService;
             _httpService = httpService;
+            _bestCaseSearcher = bestCaseSearcher;
         }
 
         /// <summary>
@@ -58,6 +61,7 @@ namespace BadBroker.BusinessLogic.Services
 
                 DateTime startDate = _stringToDateParser.Parse(inputDTO.StartDate);
                 DateTime endDate = _stringToDateParser.Parse(inputDTO.EndDate);
+                decimal score = inputDTO.Score;
 
                 IEnumerable<DateTime> dates = _enumerateDaysBetweenDates.Execute(startDate, endDate);
 
@@ -102,7 +106,7 @@ namespace BadBroker.BusinessLogic.Services
                 }
 
                 BestCaseSearcher bestCaseSearcher = new BestCaseSearcher();
-                OutputDTO bestCase = bestCaseSearcher.SearchBestCase(quotes.OrderBy(q => q.Date).ToList());
+                OutputDTO bestCase = bestCaseSearcher.SearchBestCase(quotes.OrderBy(q => q.Date).ToList(), score);
                 return bestCase;
             }
             catch (NullReferenceException ex)
