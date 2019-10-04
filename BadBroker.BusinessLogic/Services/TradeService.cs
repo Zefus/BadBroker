@@ -105,8 +105,7 @@ namespace BadBroker.BusinessLogic.Services
                     quotes = cachedQuotes;
                 }
 
-                BestCaseSearcher bestCaseSearcher = new BestCaseSearcher();
-                OutputDTO bestCase = bestCaseSearcher.SearchBestCase(quotes.OrderBy(q => q.Date).ToList(), score);
+                OutputDTO bestCase = _bestCaseSearcher.SearchBestCase(quotes.OrderBy(q => q.Date).ToList(), score);
                 return bestCase;
             }
             catch (NullReferenceException ex)
