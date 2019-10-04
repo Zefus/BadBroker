@@ -9,10 +9,13 @@ namespace BadBroker.WebService.Controllers
 {
     public class HomeController : Controller
     {
-        public ITradeService _tradeService { get; set; }
-        public HomeController(ITradeService tradeService)
+        public IModelValidator _modelValidator;
+        private ITradeService _tradeService;
+
+        public HomeController(ITradeService tradeService, IModelValidator modelValidator)
         {
             _tradeService = tradeService;
+            _modelValidator = modelValidator;
         }
 
         [HttpGet]
@@ -26,8 +29,7 @@ namespace BadBroker.WebService.Controllers
         {
             try
             {
-                ValidationModel validationModel = new ValidationModel();
-                if (validationModel.Validate(inputDTO))
+                if (_modelValidator.Validate(inputDTO))
                 {
                     if (_tradeService == null)
                         throw new TradeServiceException("Property '_tradeService' is null");
@@ -37,7 +39,7 @@ namespace BadBroker.WebService.Controllers
                 }
                 else
                 {
-                    return BadRequest();
+                    return Json(new { Success = false, redirectUrl = "/home/internalerror" });
                 }
             }
             catch (TradeServiceException ex)

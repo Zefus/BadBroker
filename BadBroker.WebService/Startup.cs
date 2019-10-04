@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using BadBroker.BusinessLogic.Interfaces;
 using BadBroker.BusinessLogic.Services;
 using BadBroker.DataAccess;
+using BadBroker.WebService.Validation;
 
 namespace BadBroker.WebService
 {
@@ -33,6 +34,7 @@ namespace BadBroker.WebService
             services.AddDbContext<BadBrokerContext>(opt => opt.UseSqlServer(Configuration.GetConnectionString("Db")));
 
             services
+                .AddScoped<IModelValidator, ModelValidator>()
                 .AddScoped<IStringToDateParser, StringToDateParser>()
                 .AddScoped<IEnumerateDaysBetweenDates, EnumerateDaysBetweenDates>()
                 .AddScoped<IDBService, DBService>()

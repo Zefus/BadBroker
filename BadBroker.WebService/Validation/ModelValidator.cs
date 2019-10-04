@@ -1,17 +1,23 @@
 ﻿using System;
 using BadBroker.BusinessLogic.ModelsDTO;
-using BadBroker.BusinessLogic.Services;
+using BadBroker.BusinessLogic.Interfaces;
 
 namespace BadBroker.WebService.Validation
 {
-    public class ValidationModel
+    public class ModelValidator : IModelValidator
     {
+        private IStringToDateParser _stringToDateParser;
+
+        public ModelValidator(IStringToDateParser stringToDateParser)
+        {
+            _stringToDateParser = stringToDateParser;
+        }
+
         public bool Validate(InputDTO inputDTO)
         {
-            StringToDateParser stringToDateParser = new StringToDateParser();
-
-            DateTime startDate = stringToDateParser.Parse(inputDTO.StartDate);
-            DateTime endDate = stringToDateParser.Parse(inputDTO.EndDate);
+            DateTime startDate = _stringToDateParser.Parse(inputDTO.StartDate);
+            DateTime endDate = _stringToDateParser.Parse(inputDTO.EndDate);
+            decimal score = inputDTO.Score;
 
             if (inputDTO == null)
                 return false;
@@ -35,6 +41,9 @@ namespace BadBroker.WebService.Validation
                 return false;
 
             if (endDate > DateTime.Now)
+                return false;
+
+            if (score <= 0)
                 return false;
 
             return true;
