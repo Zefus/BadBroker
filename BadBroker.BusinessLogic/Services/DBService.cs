@@ -56,14 +56,17 @@ namespace BadBroker.BusinessLogic.Services
         /// <typeparam name="TEntity">Source type</typeparam>
         /// <typeparam name="TResult">Return type</typeparam>
         /// <param name="selector">Key on which data is selected</param>
+        /// <param name="cancellationToken">Token of cancelled operation</param>
         /// <returns></returns>
-        public async Task<IEnumerable<TResult>> SelectQuotes<TEntity, TResult>(Expression<Func<TEntity, TResult>> selector)
+        public async Task<IEnumerable<TResult>> SelectQuotes<TEntity, TResult>(
+            Expression<Func<TEntity, TResult>> selector, 
+            CancellationToken cancellationToken)
             where TEntity : class
         {
             try
             {
                 IQueryable<TResult> query = _context.Set<TEntity>().Select(selector);
-                return await query.ToListAsync().ConfigureAwait(false);
+                return await query.ToListAsync(cancellationToken).ConfigureAwait(false);
             }
             catch (SqlException ex)
             {

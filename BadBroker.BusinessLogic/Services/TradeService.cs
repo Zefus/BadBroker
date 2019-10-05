@@ -75,7 +75,9 @@ namespace BadBroker.BusinessLogic.Services
 
                 if (cachedDates.Count() != 0)
                 {
-                    quotesDatas = await _dBService.GetQuotes<QuotesData>(qd => cachedDates.Contains(qd.Date), CancellationToken.None, qd => qd.RatesPerDate);
+                    quotesDatas = await _dBService.GetQuotes<QuotesData>(qd => cachedDates.Contains(qd.Date), 
+                                                                         CancellationToken.None, 
+                                                                         qd => qd.RatesPerDate);
 
                     foreach (QuotesData quotesData in quotesDatas)
                     {
@@ -92,17 +94,21 @@ namespace BadBroker.BusinessLogic.Services
                 if (apiDates.Count() != 0)
                 {
                     List<QuotesDTO> apiQuotes = (await _httpService.GetCurrencyRatesAsync(apiDates)).ToList();
-                    List<QuotesData> quotesForCashing = new List<QuotesData>();
+                    List<QuotesData> quotesForCaching = new List<QuotesData>();
 
                     apiQuotes.ForEach(aQ =>
                     {
-                         QuotesData quotesData = new QuotesData();
-                         quotesData.Date = aQ.Date;
-                         quotesData.Quotes = aQ.Quotes;
-                         quotesForCashing.Add(quotesData);
+                        QuotesData quotesData = new QuotesData();
+                        quotesData.Date = aQ.Date;
+                        quotesData.RatesPerDate = new List<RatesPerDate>();
+                        foreach (var key in aQ.Quotes.Keys)
+                        {
+                            quotesData.RatesPerDate.Add(new RatesPerDate() { Name = key, Rate = aQ.Quotes[key] });
+                        }
+                        quotesForCaching.Add(quotesData);
                     });
 
-                    await _dBService.AddQuotesRange(quotesForCashing);
+                    await _dBService.AddQuotesRange(quotesForCaching);
                     quotes = apiQuotes.Union(cachedQuotes).OrderBy(q => q.Date).ToList();
                 }
                 else
