@@ -11,15 +11,16 @@ namespace BadBroker.BusinessLogic.Interfaces
 {
     public interface IDBService
     {
-        Task<IEnumerable<TEntity>> GetQuotes<TEntity>(
+        Task<IEnumerable<TEntity>> GetRates<TEntity>(
             Expression<Func<TEntity, bool>> predicate,
             CancellationToken cancellationToken,
             params Expression<Func<TEntity, object>>[] includes) where TEntity : class;
 
-        Task<IEnumerable<TResult>> SelectQuotes<TEntity, TResult>(Expression<Func<TEntity, TResult>> selector) 
+        Task<IEnumerable<TResult>> SelectRates<TEntity, TResult>(Expression<Func<TEntity, TResult>> selector,
+                                                                  CancellationToken cancellationToken) 
             where TEntity : class;
 
-        Task AddQuotesRange<TEntity>(IEnumerable<TEntity> entity) 
+        Task AddRatesRange<TEntity>(IEnumerable<TEntity> entity) 
             where TEntity : class;
     }
 }

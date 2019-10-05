@@ -42,7 +42,7 @@ namespace BadBroker.WebService.Controllers
                     return BadRequest();
                 }
             }
-            catch (TradeServiceException ex)
+            catch (TradeServiceException)
             {
                 return Json(new { Success = false, redirectUrl =  "/home/internalerror"});
             }

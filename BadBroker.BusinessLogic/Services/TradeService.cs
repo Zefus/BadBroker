@@ -66,57 +66,57 @@ namespace BadBroker.BusinessLogic.Services
 
                 IEnumerable<DateTime> dates = _enumerateDaysBetweenDates.Execute(startDate, endDate);
 
-                IEnumerable<DateTime> cachedDates = dates.Intersect(await _dBService.SelectQuotes<QuotesData, DateTime>(qd => qd.Date));
-                IEnumerable<DateTime> apiDates = dates.Except(await _dBService.SelectQuotes<QuotesData, DateTime>(qd => qd.Date));
+                IEnumerable<DateTime> cachedDates = dates.Intersect(await _dBService.SelectRates<RatesData, DateTime>(qd => qd.Date, CancellationToken.None));
+                IEnumerable<DateTime> apiDates = dates.Except(await _dBService.SelectRates<RatesData, DateTime>(qd => qd.Date, CancellationToken.None));
 
-                List<QuotesDTO> cachedQuotes = new List<QuotesDTO>();
+                List<RatesDTO> cachedRates = new List<RatesDTO>();
 
-                IEnumerable<QuotesData> quotesDatas;
+                IEnumerable<RatesData> ratesDatas;
 
                 if (cachedDates.Count() != 0)
                 {
-                    quotesDatas = await _dBService.GetQuotes<QuotesData>(qd => cachedDates.Contains(qd.Date), 
+                    ratesDatas = await _dBService.GetRates<RatesData>(qd => cachedDates.Contains(qd.Date), 
                                                                          CancellationToken.None, 
                                                                          qd => qd.RatesPerDate);
 
-                    foreach (QuotesData quotesData in quotesDatas)
+                    foreach (RatesData ratesData in ratesDatas)
                     {
-                        Dictionary<string, decimal> rates = new Dictionary<string, decimal>();
+                        Dictionary<string, decimal> mappedRates = new Dictionary<string, decimal>();
 
-                        quotesData.RatesPerDate.ForEach(rpd => rates.Add(rpd.Name, rpd.Rate));
+                        ratesData.RatesPerDate.ForEach(rpd => mappedRates.Add(rpd.Name, rpd.Rate));
 
-                        cachedQuotes.Add(new QuotesDTO(quotesData.Date, rates));
+                        cachedRates.Add(new RatesDTO(ratesData.Date, mappedRates));
                     }
                 }
 
-                List<QuotesDTO> quotes = new List<QuotesDTO>();
+                List<RatesDTO> rates = new List<RatesDTO>();
 
                 if (apiDates.Count() != 0)
                 {
-                    List<QuotesDTO> apiQuotes = (await _httpService.GetCurrencyRatesAsync(apiDates)).ToList();
-                    List<QuotesData> quotesForCaching = new List<QuotesData>();
+                    List<RatesDTO> apiRates = (await _httpService.GetCurrencyRatesAsync(apiDates)).ToList();
+                    List<RatesData> ratesForCaching = new List<RatesData>();
 
-                    apiQuotes.ForEach(aQ =>
+                    apiRates.ForEach(aR =>
                     {
-                        QuotesData quotesData = new QuotesData();
-                        quotesData.Date = aQ.Date;
-                        quotesData.RatesPerDate = new List<RatesPerDate>();
-                        foreach (var key in aQ.Quotes.Keys)
+                        RatesData ratesData = new RatesData();
+                        ratesData.Date = aR.Date;
+                        ratesData.RatesPerDate = new List<RatesPerDate>();
+                        foreach (var key in aR.Rates.Keys)
                         {
-                            quotesData.RatesPerDate.Add(new RatesPerDate() { Name = key, Rate = aQ.Quotes[key] });
+                            ratesData.RatesPerDate.Add(new RatesPerDate() { Name = key, Rate = aR.Rates[key] });
                         }
-                        quotesForCaching.Add(quotesData);
+                        ratesForCaching.Add(ratesData);
                     });
 
-                    await _dBService.AddQuotesRange(quotesForCaching);
-                    quotes = apiQuotes.Union(cachedQuotes).OrderBy(q => q.Date).ToList();
+                    await _dBService.AddRatesRange(ratesForCaching);
+                    rates = apiRates.Union(cachedRates).OrderBy(q => q.Date).ToList();
                 }
                 else
                 {
-                    quotes = cachedQuotes;
+                    rates = cachedRates;
                 }
 
-                OutputDTO bestCase = _bestCaseSearcher.SearchBestCase(quotes.OrderBy(q => q.Date).ToList(), score);
+                OutputDTO bestCase = _bestCaseSearcher.SearchBestCase(rates.OrderBy(q => q.Date).ToList(), score);
                 return bestCase;
             }
             catch (NullReferenceException ex)

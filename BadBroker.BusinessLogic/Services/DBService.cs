@@ -29,7 +29,7 @@ namespace BadBroker.BusinessLogic.Services
         /// <param name="cancellationToken">Token of cancelled operation</param>
         /// <param name="includes">Predicates by which eager load</param>
         /// <returns>Filtered collection QuotesData objects</returns>
-        public async Task<IEnumerable<TEntity>> GetQuotes<TEntity>(
+        public async Task<IEnumerable<TEntity>> GetRates<TEntity>(
             Expression<Func<TEntity, bool>> predicate,
             CancellationToken cancellationToken,
             params Expression<Func<TEntity, object>>[] includes)
@@ -58,7 +58,7 @@ namespace BadBroker.BusinessLogic.Services
         /// <param name="selector">Key on which data is selected</param>
         /// <param name="cancellationToken">Token of cancelled operation</param>
         /// <returns></returns>
-        public async Task<IEnumerable<TResult>> SelectQuotes<TEntity, TResult>(
+        public async Task<IEnumerable<TResult>> SelectRates<TEntity, TResult>(
             Expression<Func<TEntity, TResult>> selector, 
             CancellationToken cancellationToken)
             where TEntity : class
@@ -80,7 +80,7 @@ namespace BadBroker.BusinessLogic.Services
         /// <typeparam name="TEntity">Type of stored object</typeparam>
         /// <param name="entities">Entities to store in database</param>
         /// <returns></returns>
-        public Task AddQuotesRange<TEntity>(IEnumerable<TEntity> entities)
+        public Task AddRatesRange<TEntity>(IEnumerable<TEntity> entities)
             where TEntity : class
         {
             try
@@ -97,7 +97,7 @@ namespace BadBroker.BusinessLogic.Services
             {
                 foreach (var entry in ex.Entries)
                 {
-                    if (entry.Entity is QuotesData)
+                    if (entry.Entity is RatesData)
                     {
                         var proposedValues = entry.CurrentValues;
                         var databaseValues = entry.GetDatabaseValues();

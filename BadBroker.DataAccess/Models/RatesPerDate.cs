@@ -10,7 +10,7 @@ namespace BadBroker.DataAccess.Models
         public string Name { get; set; }
         public decimal Rate { get; set; }
 
-        public int QuotesDataId { get; set; }
-        public QuotesData QuotesData { get; set; }
+        public int RatesDataId { get; set; }
+        public RatesData RatesData { get; set; }
     }
 }

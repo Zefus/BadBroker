@@ -31,14 +31,14 @@ namespace BadBroker.WebService
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<BadBrokerContext>(opt => opt.UseSqlServer(Configuration.GetConnectionString("Db")));
+            services.AddDbContext<BadBrokerContext>(opt => opt.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
             services
                 .AddScoped<IModelValidator, ModelValidator>()
                 .AddScoped<IStringToDateParser, StringToDateParser>()
                 .AddScoped<IEnumerateDaysBetweenDates, EnumerateDaysBetweenDates>()
                 .AddScoped<IDBService, DBService>()
-                .AddScoped<IHttpService, HttpService>()
+                .AddScoped<IHttpService, ExchangeRatesApiClient>()
                 .AddScoped<IBestCaseSearcher, BestCaseSearcher>()
                 .AddScoped<ITradeService, TradeService>();
 

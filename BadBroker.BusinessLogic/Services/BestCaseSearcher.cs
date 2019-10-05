@@ -12,7 +12,7 @@ namespace BadBroker.BusinessLogic.Services
         /// </summary>
         /// <param name="quotesDTO">Currency rates</param>
         /// <returns>Greatest revenue</returns>
-        public OutputDTO SearchBestCase(IList<QuotesDTO> quotesDTO, decimal score)
+        public OutputDTO SearchBestCase(IList<RatesDTO> quotesDTO, decimal score)
         {
             if (quotesDTO == null)
                 throw new ArgumentNullException($"Argument {nameof(quotesDTO)} is null. Method: SearchBestCase");
@@ -29,8 +29,8 @@ namespace BadBroker.BusinessLogic.Services
                     {
                         DateTime buyDate = quotesDTO[index].Date;
                         DateTime sellDate = quotesDTO[i].Date;
-                        decimal revenue = quotesDTO[index].Quotes[$"USD{source}"] * score
-                            / quotesDTO[i].Quotes[$"USD{source}"] - (quotesDTO[i].Date.Subtract(quotesDTO[index].Date).Days);
+                        decimal revenue = quotesDTO[index].Rates[$"USD{source}"] * score
+                            / quotesDTO[i].Rates[$"USD{source}"] - (quotesDTO[i].Date.Subtract(quotesDTO[index].Date).Days);
                         decimal benefit = revenue - score;
                         OutputDTO outputDTO = new OutputDTO(buyDate, sellDate, source, benefit, revenue);
                         if (outputDTO.Revenue > result.Revenue)

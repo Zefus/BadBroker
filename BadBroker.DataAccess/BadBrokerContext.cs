@@ -14,6 +14,6 @@ namespace BadBroker.DataAccess
     {
         public BadBrokerContext(DbContextOptions<BadBrokerContext> options) : base(options) { }
 
-        public DbSet<QuotesData> QuotesData { get; set; }
+        public DbSet<RatesData> QuotesData { get; set; }
     }
 }
