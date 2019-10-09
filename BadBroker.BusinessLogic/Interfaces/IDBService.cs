@@ -13,11 +13,9 @@ namespace BadBroker.BusinessLogic.Interfaces
     {
         Task<IEnumerable<TEntity>> GetRates<TEntity>(
             Expression<Func<TEntity, bool>> predicate,
-            CancellationToken cancellationToken,
             params Expression<Func<TEntity, object>>[] includes) where TEntity : class;
 
-        Task<IEnumerable<TResult>> SelectRates<TEntity, TResult>(Expression<Func<TEntity, TResult>> selector,
-                                                                  CancellationToken cancellationToken) 
+        Task<IEnumerable<TResult>> SelectRates<TEntity, TResult>(Expression<Func<TEntity, TResult>> selector) 
             where TEntity : class;
 
         Task AddRatesRange<TEntity>(IEnumerable<TEntity> entity) 

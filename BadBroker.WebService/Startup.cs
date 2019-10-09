@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
+using BadBroker.BusinessLogic;
 using BadBroker.BusinessLogic.Interfaces;
 using BadBroker.BusinessLogic.Services;
 using BadBroker.DataAccess;
@@ -32,6 +33,10 @@ namespace BadBroker.WebService
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<BadBrokerContext>(opt => opt.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+
+            services.AddOptions();
+
+            services.Configure<Config>(options => { options.AccessKey = Configuration.GetSection("AccessKey").Value; }) ;
 
             services
                 .AddScoped<IModelValidator, ModelValidator>()

@@ -10,27 +10,27 @@ namespace BadBroker.BusinessLogic.Services
         /// <summary>
         /// Method of calculating the greatest benefits.
         /// </summary>
-        /// <param name="quotesDTO">Currency rates</param>
+        /// <param name="ratesDTO">Currency rates</param>
         /// <returns>Greatest revenue</returns>
-        public OutputDTO SearchBestCase(IList<RatesDTO> quotesDTO, decimal score)
+        public OutputDTO SearchBestCase(IList<RatesDTO> ratesDTO, decimal score)
         {
-            if (quotesDTO == null)
-                throw new ArgumentNullException($"Argument {nameof(quotesDTO)} is null. Method: SearchBestCase");
-            //decimal score = 100;
+            if (ratesDTO == null)
+                throw new ArgumentNullException($"Argument {nameof(ratesDTO)} is null. Method: SearchBestCase");
+
             List<string> sources = new List<string> { "RUB", "EUR", "GBP", "JPY" };
             OutputDTO result = new OutputDTO();
             foreach (string source in sources)
             {
                 int index = 0;
-                int lastElement = quotesDTO.Count;
+                int lastElement = ratesDTO.Count;
                 while (index != lastElement)
                 {
                     for (int i = index; i < lastElement; i++)
                     {
-                        DateTime buyDate = quotesDTO[index].Date;
-                        DateTime sellDate = quotesDTO[i].Date;
-                        decimal revenue = quotesDTO[index].Rates[$"USD{source}"] * score
-                            / quotesDTO[i].Rates[$"USD{source}"] - (quotesDTO[i].Date.Subtract(quotesDTO[index].Date).Days);
+                        DateTime buyDate = ratesDTO[index].Date;
+                        DateTime sellDate = ratesDTO[i].Date;
+                        decimal revenue = ratesDTO[index].Rates[source] * score
+                            / ratesDTO[i].Rates[source] - (ratesDTO[i].Date.Subtract(ratesDTO[index].Date).Days);
                         decimal benefit = revenue - score;
                         OutputDTO outputDTO = new OutputDTO(buyDate, sellDate, source, benefit, revenue);
                         if (outputDTO.Revenue > result.Revenue)

@@ -9,7 +9,7 @@ namespace BadBroker.DataAccess.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "QuotesData",
+                name: "RatesData",
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
@@ -19,14 +19,14 @@ namespace BadBroker.DataAccess.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_QuotesData", x => x.Id);
+                    table.PrimaryKey("PK_RatesData", x => x.Id);
                 });
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "QuotesData");
+                name: "RatesData");
         }
     }
 }

@@ -7,13 +7,20 @@ using BadBroker.BusinessLogic.ModelsDTO;
 using BadBroker.BusinessLogic.Interfaces;
 using BadBroker.BusinessLogic.Extensions;
 using BadBroker.BusinessLogic.Exceptions;
-using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 
 namespace BadBroker.BusinessLogic.Services
 {
     public class ExchangeRatesApiClient : IHttpService
     {
+        private readonly IOptions<Config> _config;
+
+        public ExchangeRatesApiClient(IOptions<Config> config)
+        {
+            _config = config;
+        }
+
         /// <summary>
         /// Method return data about currency rates from apilayer.net by API service.
         /// </summary>
@@ -21,34 +28,35 @@ namespace BadBroker.BusinessLogic.Services
         /// <returns>Return the collection of currency data</returns>
         public async Task<IEnumerable<RatesDTO>> GetCurrencyRatesAsync(IEnumerable<DateTime> dates)
         {
-            try
+            string accessKey = _config.Value.AccessKey;
+            List<RatesDTO> rates = new List<RatesDTO>();
+            HttpResponseMessage response;
+            string responseBody = null;
+            using (HttpClient client = new HttpClient())
             {
-                List<RatesDTO> rates = new List<RatesDTO>();
+                client.BaseAddress = new Uri("https://openexchangerates.org/api/");
 
-                HttpResponseMessage response;
-
-                using (HttpClient client = new HttpClient())
+                foreach (DateTime date in dates)
                 {
-                    foreach (DateTime date in dates)
+                    try
                     {
-                        ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12 | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls;
-                        string apiFormattedDate = date.ToApiStringFormat();                        
-                        string url = $"https://api.exchangeratesapi.io/{apiFormattedDate}?base=USD&symbols=RUB,EUR,GBP,JPY";
+                        string apiFormattedDate = date.ToApiStringFormat();
+                        string url = $"historical/{apiFormattedDate}.json?app_id={accessKey}&base=USD&symbols=EUR,GBP,RUB,JPY";
                         response = await client.GetAsync(url);
+                        responseBody = await response.Content.ReadAsStringAsync();
                         response.EnsureSuccessStatusCode();
-                        string responseBody = await response.Content.ReadAsStringAsync();
                         RatesDTO result = JsonConvert.DeserializeObject<RatesDTO>(responseBody);
-                        if (result.Success)
-                            rates.Add(result);
-                        else
-                            throw new HttpServiceException($"API error. Status code: {result.Error.Code}. Info: {result.Error.Info}");
+                        result.Date = date;
+                        rates.Add(result);
                     }
-                    return rates;
+                    catch (HttpRequestException ex)
+                    {
+                        ErrorModelDTO errorModelDTO = JsonConvert.DeserializeObject<ErrorModelDTO>(responseBody);
+                        throw new HttpServiceException($"API error. Status code: {errorModelDTO.Status}. Message: {errorModelDTO.Message}. " +
+                            $"\nDescription: {errorModelDTO.Description}", ex);
+                    }
                 }
-            }
-            catch (HttpRequestException ex)
-            {
-                throw new HttpServiceException(ex.Message, ex);
+                return rates;
             }
         }
     }

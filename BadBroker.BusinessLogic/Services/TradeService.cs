@@ -66,8 +66,8 @@ namespace BadBroker.BusinessLogic.Services
 
                 IEnumerable<DateTime> dates = _enumerateDaysBetweenDates.Execute(startDate, endDate);
 
-                IEnumerable<DateTime> cachedDates = dates.Intersect(await _dBService.SelectRates<RatesData, DateTime>(qd => qd.Date, CancellationToken.None));
-                IEnumerable<DateTime> apiDates = dates.Except(await _dBService.SelectRates<RatesData, DateTime>(qd => qd.Date, CancellationToken.None));
+                IEnumerable<DateTime> cachedDates = dates.Intersect(await _dBService.SelectRates<RatesData, DateTime>(qd => qd.Date));
+                IEnumerable<DateTime> apiDates = dates.Except(await _dBService.SelectRates<RatesData, DateTime>(qd => qd.Date));
 
                 List<RatesDTO> cachedRates = new List<RatesDTO>();
 
@@ -75,9 +75,7 @@ namespace BadBroker.BusinessLogic.Services
 
                 if (cachedDates.Count() != 0)
                 {
-                    ratesDatas = await _dBService.GetRates<RatesData>(qd => cachedDates.Contains(qd.Date), 
-                                                                         CancellationToken.None, 
-                                                                         qd => qd.RatesPerDate);
+                    ratesDatas = await _dBService.GetRates<RatesData>(qd => cachedDates.Contains(qd.Date), qd => qd.RatesPerDate);
 
                     foreach (RatesData ratesData in ratesDatas)
                     {
@@ -116,7 +114,8 @@ namespace BadBroker.BusinessLogic.Services
                     rates = cachedRates;
                 }
 
-                OutputDTO bestCase = _bestCaseSearcher.SearchBestCase(rates.OrderBy(q => q.Date).ToList(), score);
+                List<RatesDTO> orderedRates = rates.OrderBy(q => q.Date).ToList();
+                OutputDTO bestCase = _bestCaseSearcher.SearchBestCase(orderedRates, score);
                 return bestCase;
             }
             catch (NullReferenceException ex)

@@ -22,16 +22,14 @@ namespace BadBroker.BusinessLogic.Services
         }
 
         /// <summary>
-        /// Method that returns a collection of QuotesData objects filtered by predicate.
+        /// Method that returns a collection of RatesData objects filtered by predicate.
         /// </summary>
         /// <typeparam name="TEntity">Return type</typeparam>
         /// <param name="predicate">Predicate by which data is filtered</param>
-        /// <param name="cancellationToken">Token of cancelled operation</param>
         /// <param name="includes">Predicates by which eager load</param>
-        /// <returns>Filtered collection QuotesData objects</returns>
+        /// <returns>Filtered collection RatesData objects</returns>
         public async Task<IEnumerable<TEntity>> GetRates<TEntity>(
             Expression<Func<TEntity, bool>> predicate,
-            CancellationToken cancellationToken,
             params Expression<Func<TEntity, object>>[] includes)
             where TEntity : class
         {
@@ -42,7 +40,7 @@ namespace BadBroker.BusinessLogic.Services
                 {
                     query = query.Include(include);
                 }
-                return await query.ToListAsync(cancellationToken).ConfigureAwait(false);
+                return await query.ToListAsync().ConfigureAwait(false);
             }
             catch (SqlException ex)
             {
@@ -51,22 +49,19 @@ namespace BadBroker.BusinessLogic.Services
         }
 
         /// <summary>
-        /// Method that returns a collection of QuotesData objects selected by key selector.
+        /// Method that returns a collection of RatesData objects selected by key selector.
         /// </summary>
         /// <typeparam name="TEntity">Source type</typeparam>
         /// <typeparam name="TResult">Return type</typeparam>
         /// <param name="selector">Key on which data is selected</param>
-        /// <param name="cancellationToken">Token of cancelled operation</param>
         /// <returns></returns>
-        public async Task<IEnumerable<TResult>> SelectRates<TEntity, TResult>(
-            Expression<Func<TEntity, TResult>> selector, 
-            CancellationToken cancellationToken)
+        public async Task<IEnumerable<TResult>> SelectRates<TEntity, TResult>(Expression<Func<TEntity, TResult>> selector)
             where TEntity : class
         {
             try
             {
                 IQueryable<TResult> query = _context.Set<TEntity>().Select(selector);
-                return await query.ToListAsync(cancellationToken).ConfigureAwait(false);
+                return await query.ToListAsync().ConfigureAwait(false);
             }
             catch (SqlException ex)
             {

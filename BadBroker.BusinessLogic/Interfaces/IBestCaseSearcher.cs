@@ -7,6 +7,6 @@ namespace BadBroker.BusinessLogic.Interfaces
 {
     public interface IBestCaseSearcher
     {
-        OutputDTO SearchBestCase(IList<RatesDTO> quotes, decimal score);
+        OutputDTO SearchBestCase(IList<RatesDTO> rates, decimal score);
     }
 }
