@@ -45,7 +45,8 @@ namespace BadBroker.WebService
                 .AddScoped<IDBService, DBService>()
                 .AddScoped<IHttpService, ExchangeRatesApiClient>()
                 .AddScoped<IBestCaseSearcher, BestCaseSearcher>()
-                .AddScoped<ITradeService, TradeService>();
+                .AddScoped<ITradeService, TradeService>()
+                .AddScoped<IGetCachedRatesOperation, GetCachedRatesOperation>();
 
             services.Configure<CookiePolicyOptions>(options =>
             {

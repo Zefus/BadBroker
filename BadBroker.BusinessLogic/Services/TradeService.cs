@@ -17,18 +17,21 @@ namespace BadBroker.BusinessLogic.Services
         private IDBService _dBService;
         private IHttpService _httpService;
         private IBestCaseSearcher _bestCaseSearcher;
+        private IGetCachedRatesOperation _getCachedRatesOperation;
 
         public TradeService(IStringToDateParser        stringToDateParser, 
                             IEnumerateDaysBetweenDates enumerateDaysBetweenDates, 
                             IDBService                 dBService, 
                             IHttpService               httpService,
-                            IBestCaseSearcher          bestCaseSearcher)
+                            IBestCaseSearcher          bestCaseSearcher,
+                            IGetCachedRatesOperation   getCachedRatesOperation)
         {
             _stringToDateParser = stringToDateParser;
             _enumerateDaysBetweenDates = enumerateDaysBetweenDates;
             _dBService = dBService;
             _httpService = httpService;
             _bestCaseSearcher = bestCaseSearcher;
+            _getCachedRatesOperation = getCachedRatesOperation;
         }
 
         /// <summary>
@@ -69,23 +72,7 @@ namespace BadBroker.BusinessLogic.Services
                 IEnumerable<DateTime> cachedDates = dates.Intersect(await _dBService.SelectRates<RatesData, DateTime>(qd => qd.Date));
                 IEnumerable<DateTime> apiDates = dates.Except(await _dBService.SelectRates<RatesData, DateTime>(qd => qd.Date));
 
-                List<RatesDTO> cachedRates = new List<RatesDTO>();
-
-                IEnumerable<RatesData> ratesDatas;
-
-                if (cachedDates.Count() != 0)
-                {
-                    ratesDatas = await _dBService.GetRates<RatesData>(qd => cachedDates.Contains(qd.Date), qd => qd.RatesPerDate);
-
-                    foreach (RatesData ratesData in ratesDatas)
-                    {
-                        Dictionary<string, decimal> mappedRates = new Dictionary<string, decimal>();
-
-                        ratesData.RatesPerDate.ForEach(rpd => mappedRates.Add(rpd.Name, rpd.Rate));
-
-                        cachedRates.Add(new RatesDTO(ratesData.Date, mappedRates));
-                    }
-                }
+                List<RatesDTO> cachedRates = (await _getCachedRatesOperation.ExecuteAsync(cachedDates)).ToList(); ;
 
                 List<RatesDTO> rates = new List<RatesDTO>();
 
@@ -114,7 +101,7 @@ namespace BadBroker.BusinessLogic.Services
                     rates = cachedRates;
                 }
 
-                List<RatesDTO> orderedRates = rates.OrderBy(q => q.Date).ToList();
+                List<RatesDTO> orderedRates = rates.OrderBy(r => r.Date).ToList();
                 OutputDTO bestCase = _bestCaseSearcher.SearchBestCase(orderedRates, score);
                 return bestCase;
             }
