@@ -71,7 +71,7 @@ namespace BadBroker.BusinessLogic.Services
         }
 
         /// <summary>
-        /// Method that save QuotesData objects to database.
+        /// Method that save RatesData objects to database.
         /// </summary>
         /// <typeparam name="TEntity">Type of stored object</typeparam>
         /// <param name="entities">Entities to store in database</param>

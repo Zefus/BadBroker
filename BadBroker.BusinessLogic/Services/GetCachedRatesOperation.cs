@@ -18,6 +18,11 @@ namespace BadBroker.BusinessLogic.Services
             _dBService = dBService;
         }
 
+        /// <summary>
+        /// Method that get rates data from database.
+        /// </summary>
+        /// <param name="cachedDates">Dates for which method returns rates data</param>
+        /// <returns>Collection of RatesDTO objects</returns>
         public async Task<IEnumerable<RatesDTO>> ExecuteAsync(IEnumerable<DateTime> cachedDates)
         {
             List<RatesDTO> cachedRates = new List<RatesDTO>();
