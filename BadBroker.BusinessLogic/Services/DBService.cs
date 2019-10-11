@@ -15,7 +15,8 @@ namespace BadBroker.BusinessLogic.Services
 {
     public class DBService : IDBService
     {
-        private BadBrokerContext _context { get; }
+        private bool disposed = false;
+        private BadBrokerContext _context;
         public DBService(BadBrokerContext context)
         {
             _context = context;
@@ -81,45 +82,66 @@ namespace BadBroker.BusinessLogic.Services
             try
             {
                 _context.AddRange(entities);
-                _context.SaveChanges();
+                _context.SaveChangesAsync();
                 return Task.FromResult(1);
             }
             catch(SqlException ex)
             {
                 throw new DBServiceException(ex.Message, ex);
             }
-            catch (DbUpdateConcurrencyException ex)
+            //catch (DbUpdateConcurrencyException ex)
+            //{
+            //    foreach (var entry in ex.Entries)
+            //    {
+            //        if (entry.Entity is RatesData)
+            //        {
+            //            var proposedValues = entry.CurrentValues;
+            //            var databaseValues = entry.GetDatabaseValues();
+
+            //            foreach (var property in proposedValues.Properties)
+            //            {
+            //                var proposedValue = proposedValues[property];
+            //                var databaseValue = databaseValues[property];
+
+            //                proposedValues[property] = databaseValue;
+            //            }
+
+            //            entry.OriginalValues.SetValues(databaseValues);
+            //        }
+            //        else
+            //        {
+            //            throw new NotSupportedException(
+            //                "DbUpdateConcurrencyException metadata: "
+            //                + entry.Metadata.Name);
+            //        }
+            //    }
+            //    return Task.FromResult(1);
+            //}
+            //catch (DbUpdateException ex)
+            //{
+            //    throw new DBServiceException(ex.Message, ex);
+            //}
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposed)
             {
-                foreach (var entry in ex.Entries)
+                if (disposing)
                 {
-                    if (entry.Entity is RatesData)
+                    if (_context != null)
                     {
-                        var proposedValues = entry.CurrentValues;
-                        var databaseValues = entry.GetDatabaseValues();
-
-                        foreach (var property in proposedValues.Properties)
-                        {
-                            var proposedValue = proposedValues[property];
-                            var databaseValue = databaseValues[property];
-
-                            proposedValues[property] = databaseValue;
-                        }
-
-                        entry.OriginalValues.SetValues(databaseValues);
-                    }
-                    else
-                    {
-                        throw new NotSupportedException(
-                            "Don't know how to handle concurrency conflicts for "
-                            + entry.Metadata.Name);
+                        _context.Dispose();
                     }
                 }
-                return Task.FromResult(1);
+                disposed = true;
             }
-            catch (DbUpdateException ex)
-            {
-                throw new DBServiceException(ex.Message, ex);
-            }
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
         }
     }
 }

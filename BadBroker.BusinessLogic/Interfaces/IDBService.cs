@@ -20,5 +20,7 @@ namespace BadBroker.BusinessLogic.Interfaces
 
         Task AddRatesRange<TEntity>(IEnumerable<TEntity> entity) 
             where TEntity : class;
+
+        void Dispose();
     }
 }

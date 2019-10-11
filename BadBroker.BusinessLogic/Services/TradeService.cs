@@ -72,16 +72,14 @@ namespace BadBroker.BusinessLogic.Services
                 IEnumerable<DateTime> cachedDates = dates.Intersect(await _dBService.SelectRates<RatesData, DateTime>(qd => qd.Date));
                 IEnumerable<DateTime> apiDates = dates.Except(await _dBService.SelectRates<RatesData, DateTime>(qd => qd.Date));
 
-                List<RatesDTO> cachedRates = (await _getCachedRatesOperation.ExecuteAsync(cachedDates)).ToList(); ;
+                IEnumerable<RatesDTO> cachedRates = await _getCachedRatesOperation.ExecuteAsync(cachedDates);
+                IEnumerable<RatesDTO> apiRates = await _httpService.GetCurrencyRatesAsync(apiDates);
 
-                List<RatesDTO> rates = new List<RatesDTO>();
-
-                if (apiDates.Count() != 0)
+                if (apiRates.Count() != 0)
                 {
-                    List<RatesDTO> apiRates = (await _httpService.GetCurrencyRatesAsync(apiDates)).ToList();
                     List<RatesData> ratesForCaching = new List<RatesData>();
 
-                    apiRates.ForEach(aR =>
+                    foreach (RatesDTO aR in apiRates)
                     {
                         RatesData ratesData = new RatesData();
                         ratesData.Date = aR.Date;
@@ -91,18 +89,27 @@ namespace BadBroker.BusinessLogic.Services
                             ratesData.RatesPerDate.Add(new RatesPerDate() { Name = key, Rate = aR.Rates[key] });
                         }
                         ratesForCaching.Add(ratesData);
-                    });
+                    }
+
+                    //apiRates.ForEach(aR =>
+                    //{
+                    //    RatesData ratesData = new RatesData();
+                    //    ratesData.Date = aR.Date;
+                    //    ratesData.RatesPerDate = new List<RatesPerDate>();
+                    //    foreach (var key in aR.Rates.Keys)
+                    //    {
+                    //        ratesData.RatesPerDate.Add(new RatesPerDate() { Name = key, Rate = aR.Rates[key] });
+                    //    }
+                    //    ratesForCaching.Add(ratesData);
+                    //});
 
                     await _dBService.AddRatesRange(ratesForCaching);
-                    rates = apiRates.Union(cachedRates).OrderBy(q => q.Date).ToList();
                 }
-                else
-                {
-                    rates = cachedRates;
-                }
+                _dBService.Dispose();
 
-                List<RatesDTO> orderedRates = rates.OrderBy(r => r.Date).ToList();
-                OutputDTO bestCase = _bestCaseSearcher.SearchBestCase(orderedRates, score);
+                List<RatesDTO> rates = apiRates.Union(cachedRates).OrderBy(r => r.Date).ToList();
+
+                OutputDTO bestCase = _bestCaseSearcher.SearchBestCase(rates, score);
                 return bestCase;
             }
             catch (NullReferenceException ex)
