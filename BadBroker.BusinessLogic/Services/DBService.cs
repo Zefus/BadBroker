@@ -89,38 +89,10 @@ namespace BadBroker.BusinessLogic.Services
             {
                 throw new DBServiceException(ex.Message, ex);
             }
-            //catch (DbUpdateConcurrencyException ex)
-            //{
-            //    foreach (var entry in ex.Entries)
-            //    {
-            //        if (entry.Entity is RatesData)
-            //        {
-            //            var proposedValues = entry.CurrentValues;
-            //            var databaseValues = entry.GetDatabaseValues();
-
-            //            foreach (var property in proposedValues.Properties)
-            //            {
-            //                var proposedValue = proposedValues[property];
-            //                var databaseValue = databaseValues[property];
-
-            //                proposedValues[property] = databaseValue;
-            //            }
-
-            //            entry.OriginalValues.SetValues(databaseValues);
-            //        }
-            //        else
-            //        {
-            //            throw new NotSupportedException(
-            //                "DbUpdateConcurrencyException metadata: "
-            //                + entry.Metadata.Name);
-            //        }
-            //    }
-            //    return Task.FromResult(1);
-            //}
-            //catch (DbUpdateException ex)
-            //{
-            //    throw new DBServiceException(ex.Message, ex);
-            //}
+            catch (DbUpdateException ex)
+            {
+                throw new DBServiceException(ex.Message, ex);
+            }
         }
 
         protected virtual void Dispose(bool disposing)

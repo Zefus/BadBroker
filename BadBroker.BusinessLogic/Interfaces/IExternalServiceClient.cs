@@ -6,7 +6,7 @@ using BadBroker.BusinessLogic.ModelsDTO;
 
 namespace BadBroker.BusinessLogic.Interfaces
 {
-    public interface IHttpService
+    public interface IExternalServiceClient
     {
         Task<IEnumerable<RatesDTO>> GetCurrencyRatesAsync(IEnumerable<DateTime> date);
     }

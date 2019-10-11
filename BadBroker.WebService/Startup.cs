@@ -43,7 +43,7 @@ namespace BadBroker.WebService
                 .AddScoped<IStringToDateParser, StringToDateParser>()
                 .AddScoped<IEnumerateDaysBetweenDates, EnumerateDaysBetweenDates>()
                 .AddScoped<IDBService, DBService>()
-                .AddScoped<IHttpService, ExchangeRatesApiClient>()
+                .AddScoped<IExternalServiceClient, ExchangeRatesApiClient>()
                 .AddScoped<IBestCaseSearcher, BestCaseSearcher>()
                 .AddScoped<ITradeService, TradeService>()
                 .AddScoped<IGetCachedRatesOperation, GetCachedRatesOperation>();

@@ -12,7 +12,7 @@ using Newtonsoft.Json;
 
 namespace BadBroker.BusinessLogic.Services
 {
-    public class ExchangeRatesApiClient : IHttpService
+    public class ExchangeRatesApiClient : IExternalServiceClient
     {
         private readonly IOptions<Config> _config;
 
