@@ -9,10 +9,13 @@ namespace BadBroker.WebService.Controllers
 {
     public class HomeController : Controller
     {
-        public ITradeService _tradeService { get; set; }
-        public HomeController(ITradeService tradeService)
+        private IModelValidator _modelValidator;
+        private ITradeService _tradeService;
+
+        public HomeController(ITradeService tradeService, IModelValidator modelValidator)
         {
             _tradeService = tradeService;
+            _modelValidator = modelValidator;
         }
 
         [HttpGet]
@@ -26,26 +29,23 @@ namespace BadBroker.WebService.Controllers
         {
             try
             {
-                ValidationModel validationModel = new ValidationModel();
-                if (validationModel.Validate(inputDTO))
+                if (_modelValidator.Validate(inputDTO))
                 {
+                    if (_tradeService == null)
+                        throw new TradeServiceException();
+
                     OutputDTO result = await _tradeService.MakeTrade(inputDTO);
-                    return Json(new { Success = true, result});
+                    return Json(new { Success = true, result });
                 }
                 else
                 {
                     return BadRequest();
                 }
             }
-            catch (TradeServiceException ex)
+            catch (TradeServiceException)
             {
-                return Json(new { Success = false, redirectUrl =  "/home/internalerror"});
+                return Json(new { Success = false, message = "An unexpected server error" });
             }
-        }
-
-        public IActionResult InternalError()
-        {
-            return View();
         }
     }
 }

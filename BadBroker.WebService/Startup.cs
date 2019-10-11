@@ -6,9 +6,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
+using BadBroker.BusinessLogic;
 using BadBroker.BusinessLogic.Interfaces;
 using BadBroker.BusinessLogic.Services;
 using BadBroker.DataAccess;
+using BadBroker.WebService.Validation;
 
 namespace BadBroker.WebService
 {
@@ -30,12 +32,21 @@ namespace BadBroker.WebService
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<BadBrokerContext>(opt => opt.UseSqlServer(Configuration.GetConnectionString("Db")));
+            services.AddDbContext<BadBrokerContext>(opt => opt.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+
+            services.AddOptions();
+
+            services.Configure<Config>(Configuration.GetSection("ExchangeRatesConnectionOptions"));
 
             services
-                .AddScoped<IDBService, DBService>()
-                .AddScoped<IHttpService, HttpService>()
-                .AddScoped<ITradeService, TradeService>();
+                .AddScoped<IModelValidator, ModelValidator>()
+                .AddScoped<IStringToDateParser, StringToDateParser>()
+                .AddScoped<IEnumerateDaysBetweenDates, EnumerateDaysBetweenDates>()
+                .AddScoped<IDBService, DBRatesService>()
+                .AddScoped<IExternalServiceClient, ExchangeRatesApiClient>()
+                .AddScoped<IBestCaseSearcher, BestCaseSearcher>()
+                .AddScoped<ITradeService, TradeService>()
+                .AddScoped<IGetCachedRatesOperation, GetCachedRatesOperation>();
 
             services.Configure<CookiePolicyOptions>(options =>
             {

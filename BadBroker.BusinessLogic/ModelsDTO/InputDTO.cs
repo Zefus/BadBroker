@@ -8,13 +8,15 @@ namespace BadBroker.BusinessLogic.ModelsDTO
     {
         public string StartDate { get; set; }
         public string EndDate { get; set; }
+        public decimal Score { get; set; }
 
         public InputDTO() { }
 
-        public InputDTO(string startDate, string endDate)
+        public InputDTO(string startDate, string endDate, decimal score)
         {
             StartDate = startDate;
             EndDate = endDate;
+            Score = score;
         }
     }
 }

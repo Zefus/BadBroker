@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using BadBroker.BusinessLogic.Interfaces;
 using BadBroker.BusinessLogic.ModelsDTO;
@@ -11,12 +12,26 @@ namespace BadBroker.BusinessLogic.Services
 {
     public class TradeService : ITradeService
     {
+        private IStringToDateParser _stringToDateParser;
+        private IEnumerateDaysBetweenDates _enumerateDaysBetweenDates;
         private IDBService _dBService;
-        private IHttpService _httpService;
-        public TradeService(IDBService dBService, IHttpService httpService)
+        private IExternalServiceClient _externalServiceClient;
+        private IBestCaseSearcher _bestCaseSearcher;
+        private IGetCachedRatesOperation _getCachedRatesOperation;
+
+        public TradeService(IStringToDateParser            stringToDateParser, 
+                            IEnumerateDaysBetweenDates     enumerateDaysBetweenDates, 
+                            IDBService                     dBService, 
+                            IExternalServiceClient         externalServiceClient,
+                            IBestCaseSearcher              bestCaseSearcher,
+                            IGetCachedRatesOperation       getCachedRatesOperation)
         {
+            _stringToDateParser = stringToDateParser;
+            _enumerateDaysBetweenDates = enumerateDaysBetweenDates;
             _dBService = dBService;
-            _httpService = httpService;
+            _externalServiceClient = externalServiceClient;
+            _bestCaseSearcher = bestCaseSearcher;
+            _getCachedRatesOperation = getCachedRatesOperation;
         }
 
         /// <summary>
@@ -28,52 +43,65 @@ namespace BadBroker.BusinessLogic.Services
         {
             try
             {
-                StringToDateParser stringToDateParser = new StringToDateParser();
-
-                DateTime startDate = stringToDateParser.Parse(inputDTO.StartDate);
-                DateTime endDate = stringToDateParser.Parse(inputDTO.EndDate);
-
-                EnumerateDaysBetweenDates enumerateDaysBetweenDates = new EnumerateDaysBetweenDates();
-                IEnumerable<DateTime> dates = enumerateDaysBetweenDates.Execute(startDate, endDate);
-
-                IEnumerable<DateTime> cachedDates = dates.Intersect(await _dBService.SelectQuotes<QuotesData, DateTime>(qd => qd.Date));
-                IEnumerable<DateTime> apiDates = dates.Except(await _dBService.SelectQuotes<QuotesData, DateTime>(qd => qd.Date));
-
-                List<QuotesDTO> cachedQuotes = new List<QuotesDTO>();
-
-                IEnumerable<QuotesData> quotesDatas = await _dBService.GetQuotes<QuotesData>(qd => cachedDates.Contains(qd.Date));
-
-                foreach (QuotesData quotesData in quotesDatas)
+                if (_stringToDateParser == null)
                 {
-                    cachedQuotes.Add(new QuotesDTO(quotesData.Date, quotesData.Quotes));
+                    throw new NullReferenceException("_stringToDateParser field is null");
                 }
 
-                List<QuotesDTO> quotes = new List<QuotesDTO>();
-
-                if (apiDates.Count() != 0)
+                if (_enumerateDaysBetweenDates == null)
                 {
-                    List<QuotesDTO> apiQuotes = (await _httpService.GetCurrencyRatesAsync(apiDates)).ToList();
-                    List<QuotesData> quotesForCashing = new List<QuotesData>();
+                    throw new NullReferenceException("_enumerateDaysBetweenDates field is null");
+                }
 
-                    apiQuotes.ForEach(aQ =>
+                if (_externalServiceClient == null)
+                {
+                    throw new NullReferenceException("_httpService field is null");
+                }
+
+                if (_dBService == null)
+                {
+                    throw new NullReferenceException("_dBService field is null");
+                }
+
+                DateTime startDate = _stringToDateParser.Parse(inputDTO.StartDate);
+                DateTime endDate = _stringToDateParser.Parse(inputDTO.EndDate);
+                decimal score = inputDTO.Score;
+
+                IEnumerable<DateTime> dates = _enumerateDaysBetweenDates.Execute(startDate, endDate);
+
+                IEnumerable<DateTime> cachedDates = dates.Intersect(await _dBService.SelectRates<RatesData, DateTime>(rd => rd.Date));
+                IEnumerable<DateTime> apiDates = dates.Except(await _dBService.SelectRates<RatesData, DateTime>(rd => rd.Date));
+
+                IEnumerable<RatesDTO> cachedRates = await _getCachedRatesOperation.ExecuteAsync(cachedDates);
+                IEnumerable<RatesDTO> apiRates = await _externalServiceClient.GetCurrencyRatesAsync(apiDates);
+
+                List<RatesData> ratesForCaching = new List<RatesData>();
+
+                if (apiRates.Count() != 0)
+                {                    
+
+                    foreach (RatesDTO aR in apiRates)
                     {
-                         QuotesData quotesData = new QuotesData();
-                         quotesData.Date = aQ.Date;
-                         quotesData.Quotes = aQ.Quotes;
-                         quotesForCashing.Add(quotesData);
-                    });
-
-                    await _dBService.AddQuotesRange(quotesForCashing);
-                    quotes = apiQuotes.Union(cachedQuotes).OrderBy(q => q.Date).ToList();
+                        RatesData ratesData = new RatesData();
+                        ratesData.Date = aR.Date;
+                        ratesData.RatesPerDate = new List<RatesPerDate>();
+                        foreach (var key in aR.Rates.Keys)
+                        {
+                            ratesData.RatesPerDate.Add(new RatesPerDate() { Name = key, Rate = aR.Rates[key] });
+                        }
+                        ratesForCaching.Add(ratesData);
+                    }
                 }
-                else
-                {
-                    quotes = cachedQuotes;
-                }
+                await _dBService.AddRatesRange(ratesForCaching);
+                _dBService.Dispose();
+                List<RatesDTO> rates = apiRates.Union(cachedRates).OrderBy(r => r.Date).ToList();
 
-                BestCaseSearcher bestCaseSearcher = new BestCaseSearcher();
-                OutputDTO bestCase = bestCaseSearcher.SearchBestCase(quotes.OrderBy(q => q.Date).ToList());
+                OutputDTO bestCase = _bestCaseSearcher.SearchBestCase(rates, score);
                 return bestCase;
+            }
+            catch (NullReferenceException ex)
+            {
+                throw new TradeServiceException(ex.Message, ex);
             }
             catch (ArgumentNullException ex)
             {
@@ -87,6 +115,10 @@ namespace BadBroker.BusinessLogic.Services
             {
                 throw new TradeServiceException(ex.Message, ex);
             }
+            catch (Exception ex)
+            {
+                throw new TradeServiceException(ex.Message, ex);
+            } 
         }
     }
 }

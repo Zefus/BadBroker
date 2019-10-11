@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 using BadBroker.BusinessLogic.ModelsDTO;
 
 namespace BadBroker.BusinessLogic.Interfaces
 {
-    public interface IBestCaseSearcher
+    public interface IExternalServiceClient
     {
-        OutputDTO SearchBestCase(IList<RatesDTO> rates, decimal score);
+        Task<IEnumerable<RatesDTO>> GetCurrencyRatesAsync(IEnumerable<DateTime> date);
     }
 }
