@@ -43,7 +43,7 @@ namespace BadBroker.BusinessLogic.Services
                     try
                     {
                         string apiFormattedDate = date.ToApiStringFormat();
-                        string url = $"historical/{apiFormattedDate}.json?app_id={appId}&base=USD&symbols=EUR,GBP,RUB,JPY";
+                        string url = $"historical/{apiFormattedDate}.json?app_id={appId}&base={baseCurrency}&symbols={symbols}";
                         response = await client.GetAsync(url);
                         responseBody = await response.Content.ReadAsStringAsync();
                         response.EnsureSuccessStatusCode();
