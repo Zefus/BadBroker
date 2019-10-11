@@ -36,7 +36,7 @@ namespace BadBroker.WebService
 
             services.AddOptions();
 
-            services.Configure<Config>(options => { options.AccessKey = Configuration.GetSection("AccessKey").Value; }) ;
+            services.Configure<Config>(Configuration.GetSection("ExchangeRatesConnectionOptions"));
 
             services
                 .AddScoped<IModelValidator, ModelValidator>()

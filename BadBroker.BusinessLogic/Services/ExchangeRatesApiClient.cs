@@ -28,7 +28,9 @@ namespace BadBroker.BusinessLogic.Services
         /// <returns>Return the collection of currency data</returns>
         public async Task<IEnumerable<RatesDTO>> GetCurrencyRatesAsync(IEnumerable<DateTime> dates)
         {
-            string accessKey = _config.Value.AccessKey;
+            string appId = _config.Value.AppId;
+            string baseCurrency = _config.Value.Base;
+            string symbols = _config.Value.Symbols;
             List<RatesDTO> rates = new List<RatesDTO>();
             HttpResponseMessage response;
             string responseBody = null;
@@ -41,7 +43,7 @@ namespace BadBroker.BusinessLogic.Services
                     try
                     {
                         string apiFormattedDate = date.ToApiStringFormat();
-                        string url = $"historical/{apiFormattedDate}.json?app_id={accessKey}&base=USD&symbols=EUR,GBP,RUB,JPY";
+                        string url = $"historical/{apiFormattedDate}.json?app_id={appId}&base=USD&symbols=EUR,GBP,RUB,JPY";
                         response = await client.GetAsync(url);
                         responseBody = await response.Content.ReadAsStringAsync();
                         response.EnsureSuccessStatusCode();

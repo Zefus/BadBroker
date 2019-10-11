@@ -84,7 +84,7 @@ namespace BadBroker.BusinessLogic.Services
                         RatesData ratesData = new RatesData();
                         ratesData.Date = aR.Date;
                         ratesData.RatesPerDate = new List<RatesPerDate>();
-                        foreach (var key in aR.Rates.Keys.ToList())
+                        foreach (var key in aR.Rates.Keys)
                         {
                             ratesData.RatesPerDate.Add(new RatesPerDate() { Name = key, Rate = aR.Rates[key] });
                         }

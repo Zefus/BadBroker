@@ -6,6 +6,8 @@ namespace BadBroker.BusinessLogic
 {
     public class Config
     {
-        public string AccessKey { get; set; }
+        public string AppId { get; set; }
+        public string Base { get; set; }
+        public string Symbols { get; set; }
     }
 }
