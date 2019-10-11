@@ -42,7 +42,7 @@ namespace BadBroker.WebService
                 .AddScoped<IModelValidator, ModelValidator>()
                 .AddScoped<IStringToDateParser, StringToDateParser>()
                 .AddScoped<IEnumerateDaysBetweenDates, EnumerateDaysBetweenDates>()
-                .AddScoped<IDBService, DBService>()
+                .AddScoped<IDBService, DBRatesService>()
                 .AddScoped<IExternalServiceClient, ExchangeRatesApiClient>()
                 .AddScoped<IBestCaseSearcher, BestCaseSearcher>()
                 .AddScoped<ITradeService, TradeService>()

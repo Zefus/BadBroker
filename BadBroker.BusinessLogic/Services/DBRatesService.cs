@@ -13,11 +13,11 @@ using BadBroker.DataAccess.Models;
 
 namespace BadBroker.BusinessLogic.Services
 {
-    public class DBService : IDBService
+    public class DBRatesService : IDBService
     {
         private bool disposed = false;
         private BadBrokerContext _context;
-        public DBService(BadBrokerContext context)
+        public DBRatesService(BadBrokerContext context)
         {
             _context = context;
         }
