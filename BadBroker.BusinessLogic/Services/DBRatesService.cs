@@ -82,7 +82,7 @@ namespace BadBroker.BusinessLogic.Services
             try
             {
                 _context.AddRange(entities);
-                _context.SaveChangesAsync();
+                _context.SaveChanges();
                 return Task.FromResult(1);
             }
             catch(SqlException ex)

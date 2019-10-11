@@ -75,9 +75,10 @@ namespace BadBroker.BusinessLogic.Services
                 IEnumerable<RatesDTO> cachedRates = await _getCachedRatesOperation.ExecuteAsync(cachedDates);
                 IEnumerable<RatesDTO> apiRates = await _externalServiceClient.GetCurrencyRatesAsync(apiDates);
 
+                List<RatesData> ratesForCaching = new List<RatesData>();
+
                 if (apiRates.Count() != 0)
-                {
-                    List<RatesData> ratesForCaching = new List<RatesData>();
+                {                    
 
                     foreach (RatesDTO aR in apiRates)
                     {
@@ -90,10 +91,9 @@ namespace BadBroker.BusinessLogic.Services
                         }
                         ratesForCaching.Add(ratesData);
                     }
-                    await _dBService.AddRatesRange(ratesForCaching);
                 }
+                await _dBService.AddRatesRange(ratesForCaching);
                 _dBService.Dispose();
-
                 List<RatesDTO> rates = apiRates.Union(cachedRates).OrderBy(r => r.Date).ToList();
 
                 OutputDTO bestCase = _bestCaseSearcher.SearchBestCase(rates, score);
