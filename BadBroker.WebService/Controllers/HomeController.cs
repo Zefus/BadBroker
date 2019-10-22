@@ -39,12 +39,12 @@ namespace BadBroker.WebService.Controllers
                 }
                 else
                 {
-                    return BadRequest();
+                    return Json(new { Success = false, message = "Error! Invalid data." });
                 }
             }
             catch (TradeServiceException)
             {
-                return Json(new { Success = false, message = "An unexpected server error" });
+                return Json(new { Success = false, message = "An unexpected server error." });
             }
         }
     }

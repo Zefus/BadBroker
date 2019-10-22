@@ -46,6 +46,9 @@ namespace BadBroker.WebService.Validation
             if (score <= 0)
                 return false;
 
+            if ((endDate.Month - startDate.Month) > 2)
+                return false;
+
             return true;
         }
     }

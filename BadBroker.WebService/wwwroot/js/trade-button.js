@@ -1,11 +1,16 @@
 ﻿$(function () {
     $('#startDate').datetimepicker({ pickTime: false, language: 'ru' });
     $('#endDate').datetimepicker({ pickTime: false, useCurrent: false, language: 'ru' });
+    $('#endDate').data("DateTimePicker").disable();
 
     $('#startDate').data("DateTimePicker").setMinDate(new Date(1998, 12, 1));
     $('#startDate').data("DateTimePicker").setMaxDate(new Date(Date()));
     $('#startDate').on("dp.change", function (e) {
+        var dt = new Date(e.date);
+        dt.setMonth(dt.getMonth() + 2);
         $('#endDate').data("DateTimePicker").setMinDate(e.date);
+        $('#endDate').data("DateTimePicker").setMaxDate(dt);
+        $('#endDate').data("DateTimePicker").enable();
     });
 
     $('#endDate').data("DateTimePicker").setMinDate(new Date(1998, 12, 1));
