@@ -42,27 +42,7 @@ namespace BadBroker.BusinessLogic.Services
         public async Task<OutputDTO> MakeTrade(InputDTO inputDTO)
         {
             try
-            {
-                if (_stringToDateParser == null)
-                {
-                    throw new NullReferenceException("_stringToDateParser field is null");
-                }
-
-                if (_enumerateDaysBetweenDates == null)
-                {
-                    throw new NullReferenceException("_enumerateDaysBetweenDates field is null");
-                }
-
-                if (_externalServiceClient == null)
-                {
-                    throw new NullReferenceException("_httpService field is null");
-                }
-
-                if (_dBService == null)
-                {
-                    throw new NullReferenceException("_dBService field is null");
-                }
-
+            {                
                 DateTime startDate = _stringToDateParser.Parse(inputDTO.StartDate);
                 DateTime endDate = _stringToDateParser.Parse(inputDTO.EndDate);
                 decimal score = inputDTO.Score;
