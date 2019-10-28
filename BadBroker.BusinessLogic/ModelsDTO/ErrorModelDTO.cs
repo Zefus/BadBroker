@@ -6,13 +6,15 @@ namespace BadBroker.BusinessLogic.ModelsDTO
 {
     public class ErrorModelDTO
     {
-        public int Code { get; set; }
-        public string Info { get; set; }
+        public int Status { get; set; }
+        public string Message { get; set; }
+        public string Description { get; set; }
 
-        public ErrorModelDTO(int code, string info)
+        public ErrorModelDTO(int status, string message, string description)
         {
-            Code = code;
-            Info = info;
+            Status = status;
+            Message = message;
+            Description = description;
         }
     }
 }

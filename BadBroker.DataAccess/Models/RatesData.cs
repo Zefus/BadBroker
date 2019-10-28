@@ -6,7 +6,7 @@ using Newtonsoft.Json;
 
 namespace BadBroker.DataAccess.Models
 {
-    public class QuotesData
+    public class RatesData
     {
         public int Id { get; set; }
         public DateTime Date { get; set; }

@@ -4,14 +4,16 @@ using BadBroker.DataAccess;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace BadBroker.DataAccess.Migrations
 {
     [DbContext(typeof(BadBrokerContext))]
-    partial class BadBrokerContextModelSnapshot : ModelSnapshot
+    [Migration("20191009152114_add RatesPerDate column")]
+    partial class addRatesPerDatecolumn
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -29,7 +31,7 @@ namespace BadBroker.DataAccess.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("QuotesData");
+                    b.ToTable("RatesData");
                 });
 
             modelBuilder.Entity("BadBroker.DataAccess.Models.RatesPerDate", b =>

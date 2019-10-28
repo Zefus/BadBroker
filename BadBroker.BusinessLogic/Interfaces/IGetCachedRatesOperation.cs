@@ -6,8 +6,8 @@ using BadBroker.BusinessLogic.ModelsDTO;
 
 namespace BadBroker.BusinessLogic.Interfaces
 {
-    public interface IHttpService
+    public interface IGetCachedRatesOperation
     {
-        Task<IEnumerable<QuotesDTO>> GetCurrencyRatesAsync(IEnumerable<DateTime> date);
+        Task<IEnumerable<RatesDTO>> ExecuteAsync(IEnumerable<DateTime> cachedDates);
     }
 }

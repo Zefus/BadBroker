@@ -18,11 +18,11 @@ namespace BadBroker.Terminal
 
         static void Main(string[] args)
         {
-            StringToDateParser stringToDateParser = new StringToDateParser();
+            //StringToDateParser stringToDateParser = new StringToDateParser();
 
-            DateTime date = stringToDateParser.Parse("05*02*2019");
+            //DateTime date = stringToDateParser.Parse("05*02*2019");
 
-            Console.ReadKey();
+            //Console.ReadKey();
         }
 
         //public async static void FakeData()
@@ -51,43 +51,43 @@ namespace BadBroker.Terminal
 
         static async void MainAsync(string[] args)
         {
-            EnumerateDaysBetweenDates enumerateDaysBetweenDates = new EnumerateDaysBetweenDates();
+            //EnumerateDaysBetweenDates enumerateDaysBetweenDates = new EnumerateDaysBetweenDates();
 
-            IEnumerable<DateTime> dates = enumerateDaysBetweenDates.Execute(new DateTime(2019, 04, 1), new DateTime(2019, 05, 15));
+            //IEnumerable<DateTime> dates = enumerateDaysBetweenDates.Execute(new DateTime(2019, 04, 1), new DateTime(2019, 05, 15));
 
-            HttpService httpService = new HttpService();
+            //HttpService httpService = new HttpService();
 
-            List<QuotesDTO> quotes = (await httpService.GetCurrencyRatesAsync(dates)).ToList();
+            //List<QuotesDTO> quotes = (await httpService.GetCurrencyRatesAsync(dates)).ToList();
 
-            OutputDTO outputDTO = BestCase(quotes);
+            //OutputDTO outputDTO = BestCase(quotes);
         }
 
-        public static OutputDTO BestCase(IList<QuotesDTO> quotesDTO)
-        {
-            decimal score = 100;
-            List<string> sources = new List<string> { "RUB", "EUR", "GBP", "JPY" };
-            OutputDTO result = new OutputDTO();
-            foreach (string source in sources)
-            {
-                int index = 0;
-                int lastElement = quotesDTO.Count;
-                while (index != lastElement)
-                {
-                    for (int i = index; i < lastElement; i++)
-                    {
-                        DateTime buyDate = quotesDTO[index].Date;
-                        DateTime sellDate = quotesDTO[i].Date;
-                        decimal revenue = quotesDTO[index].Quotes[$"USD{source}"] * score
-                            / quotesDTO[i].Quotes[$"USD{source}"] - (quotesDTO[i].Date.Subtract(quotesDTO[index].Date).Days);
-                        decimal benefit = revenue - score;
-                        OutputDTO outputDTO = new OutputDTO(buyDate, sellDate, source, benefit, revenue);
-                        if (outputDTO.Revenue > result.Revenue)
-                            result = outputDTO;
-                    }
-                    index++;
-                }
-            }
-            return result;
-        }
+        //public static OutputDTO BestCase(IList<QuotesDTO> quotesDTO)
+        //{
+        //    decimal score = 100;
+        //    List<string> sources = new List<string> { "RUB", "EUR", "GBP", "JPY" };
+        //    OutputDTO result = new OutputDTO();
+        //    foreach (string source in sources)
+        //    {
+        //        int index = 0;
+        //        int lastElement = quotesDTO.Count;
+        //        while (index != lastElement)
+        //        {
+        //            for (int i = index; i < lastElement; i++)
+        //            {
+        //                DateTime buyDate = quotesDTO[index].Date;
+        //                DateTime sellDate = quotesDTO[i].Date;
+        //                decimal revenue = quotesDTO[index].Quotes[$"USD{source}"] * score
+        //                    / quotesDTO[i].Quotes[$"USD{source}"] - (quotesDTO[i].Date.Subtract(quotesDTO[index].Date).Days);
+        //                decimal benefit = revenue - score;
+        //                OutputDTO outputDTO = new OutputDTO(buyDate, sellDate, source, benefit, revenue);
+        //                if (outputDTO.Revenue > result.Revenue)
+        //                    result = outputDTO;
+        //            }
+        //            index++;
+        //        }
+        //    }
+        //    return result;
+        //}
     }
 }

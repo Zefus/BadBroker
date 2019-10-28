@@ -13,25 +13,24 @@ using BadBroker.DataAccess.Models;
 
 namespace BadBroker.BusinessLogic.Services
 {
-    public class DBService : IDBService
+    public class DBRatesService : IDBService
     {
-        private BadBrokerContext _context { get; }
-        public DBService(BadBrokerContext context)
+        private bool disposed = false;
+        private BadBrokerContext _context;
+        public DBRatesService(BadBrokerContext context)
         {
             _context = context;
         }
 
         /// <summary>
-        /// Method that returns a collection of QuotesData objects filtered by predicate.
+        /// Method that returns a collection of RatesData objects filtered by predicate.
         /// </summary>
         /// <typeparam name="TEntity">Return type</typeparam>
         /// <param name="predicate">Predicate by which data is filtered</param>
-        /// <param name="cancellationToken">Token of cancelled operation</param>
         /// <param name="includes">Predicates by which eager load</param>
-        /// <returns>Filtered collection QuotesData objects</returns>
-        public async Task<IEnumerable<TEntity>> GetQuotes<TEntity>(
+        /// <returns>Filtered collection RatesData objects</returns>
+        public async Task<IEnumerable<TEntity>> GetRates<TEntity>(
             Expression<Func<TEntity, bool>> predicate,
-            CancellationToken cancellationToken,
             params Expression<Func<TEntity, object>>[] includes)
             where TEntity : class
         {
@@ -42,7 +41,7 @@ namespace BadBroker.BusinessLogic.Services
                 {
                     query = query.Include(include);
                 }
-                return await query.ToListAsync(cancellationToken).ConfigureAwait(false);
+                return await query.ToListAsync().ConfigureAwait(false);
             }
             catch (SqlException ex)
             {
@@ -51,13 +50,13 @@ namespace BadBroker.BusinessLogic.Services
         }
 
         /// <summary>
-        /// Method that returns a collection of QuotesData objects selected by key selector.
+        /// Method that returns a collection of RatesData objects selected by key selector.
         /// </summary>
         /// <typeparam name="TEntity">Source type</typeparam>
         /// <typeparam name="TResult">Return type</typeparam>
         /// <param name="selector">Key on which data is selected</param>
         /// <returns></returns>
-        public async Task<IEnumerable<TResult>> SelectQuotes<TEntity, TResult>(Expression<Func<TEntity, TResult>> selector)
+        public async Task<IEnumerable<TResult>> SelectRates<TEntity, TResult>(Expression<Func<TEntity, TResult>> selector)
             where TEntity : class
         {
             try
@@ -77,7 +76,7 @@ namespace BadBroker.BusinessLogic.Services
         /// <typeparam name="TEntity">Type of stored object</typeparam>
         /// <param name="entities">Entities to store in database</param>
         /// <returns></returns>
-        public Task AddQuotesRange<TEntity>(IEnumerable<TEntity> entities)
+        public Task AddRatesRange<TEntity>(IEnumerable<TEntity> entities)
             where TEntity : class
         {
             try
@@ -90,38 +89,31 @@ namespace BadBroker.BusinessLogic.Services
             {
                 throw new DBServiceException(ex.Message, ex);
             }
-            catch (DbUpdateConcurrencyException ex)
-            {
-                foreach (var entry in ex.Entries)
-                {
-                    if (entry.Entity is QuotesData)
-                    {
-                        var proposedValues = entry.CurrentValues;
-                        var databaseValues = entry.GetDatabaseValues();
-
-                        foreach (var property in proposedValues.Properties)
-                        {
-                            var proposedValue = proposedValues[property];
-                            var databaseValue = databaseValues[property];
-
-                            proposedValues[property] = databaseValue;
-                        }
-
-                        entry.OriginalValues.SetValues(databaseValues);
-                    }
-                    else
-                    {
-                        throw new NotSupportedException(
-                            "Don't know how to handle concurrency conflicts for "
-                            + entry.Metadata.Name);
-                    }
-                }
-                return Task.FromResult(1);
-            }
             catch (DbUpdateException ex)
             {
                 throw new DBServiceException(ex.Message, ex);
             }
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposed)
+            {
+                if (disposing)
+                {
+                    if (_context != null)
+                    {
+                        _context.Dispose();
+                    }
+                }
+                disposed = true;
+            }
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
         }
     }
 }
