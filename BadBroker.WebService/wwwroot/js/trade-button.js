@@ -6,6 +6,7 @@
     $('#startDate').data("DateTimePicker").setMaxDate(new Date(Date()));
     $('#startDate').on("dp.change", function (e) {
         $('#endDate').data("DateTimePicker").setMinDate(e.date);
+        $('#endDate').data("DateTimePicker").setMaxDate(new Date(e.date.setMonth(e.date.getMonth() + 2)));
     });
 
     $('#endDate').data("DateTimePicker").setMinDate(new Date(1998, 12, 1));
