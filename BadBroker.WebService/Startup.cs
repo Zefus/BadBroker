@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using System;
+using System.Net.Http;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -11,6 +13,7 @@ using BadBroker.BusinessLogic.Interfaces;
 using BadBroker.BusinessLogic.Services;
 using BadBroker.DataAccess;
 using BadBroker.WebService.Validation;
+using BadBroker.WebService.Policies;
 
 namespace BadBroker.WebService
 {
@@ -41,12 +44,18 @@ namespace BadBroker.WebService
             services
                 .AddScoped<IModelValidator, ModelValidator>()
                 .AddScoped<IStringToDateParser, StringToDateParser>()
-                .AddScoped<IEnumerateDaysBetweenDates, EnumerateDaysBetweenDates>()
-                .AddScoped<IDBService, DBRatesService>()
+                .AddScoped<IEnumerateDaysBetweenDates, EnumerateDaysBetweenDates>() 
                 .AddScoped<IExternalServiceClient, ExchangeRatesApiClient>()
+                .AddScoped<IDBService, DBRatesService>()
                 .AddScoped<IBestCaseSearcher, BestCaseSearcher>()
                 .AddScoped<ITradeService, TradeService>()
                 .AddScoped<IGetCachedRatesOperation, GetCachedRatesOperation>();
+
+            services.AddHttpClient<IExternalServiceClient, ExchangeRatesApiClient>(client =>
+            {
+                client.BaseAddress = new Uri(Configuration.GetSection("ExchangeRatesConnectionOptions").GetValue<string>("BaseUrl"));
+            })
+            .AddPolicyHandler(HttpClientPolicies.GetRetryPolicy());
 
             services.Configure<CookiePolicyOptions>(options =>
             {

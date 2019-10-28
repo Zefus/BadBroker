@@ -39,7 +39,7 @@ namespace BadBroker.WebService.Controllers
                 }
                 else
                 {
-                    return Json(new { Success = false, message = "Error! Invalid data." });
+                    return Json(new { Success = false, message = "Error! Invalid input data." });
                 }
             }
             catch (TradeServiceException)

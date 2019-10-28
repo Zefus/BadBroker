@@ -5,7 +5,6 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using BadBroker.BusinessLogic.ModelsDTO;
 using BadBroker.BusinessLogic.Interfaces;
-using BadBroker.BusinessLogic.Extensions;
 using BadBroker.BusinessLogic.Exceptions;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
@@ -15,10 +14,12 @@ namespace BadBroker.BusinessLogic.Services
     public class ExchangeRatesApiClient : IExternalServiceClient
     {
         private readonly IOptions<Config> _config;
+        private readonly HttpClient _httpClient;
 
-        public ExchangeRatesApiClient(IOptions<Config> config)
+        public ExchangeRatesApiClient(IOptions<Config> config, HttpClient httpClient)
         {
             _config = config;
+            _httpClient = httpClient;
         }
 
         /// <summary>
@@ -32,34 +33,33 @@ namespace BadBroker.BusinessLogic.Services
             string baseCurrency = _config.Value.Base;
             string symbols = _config.Value.Symbols;
             List<RatesDTO> rates = new List<RatesDTO>();
+
             HttpResponseMessage response;
             string responseBody = null;
-            using (HttpClient client = new HttpClient())
-            {
-                client.BaseAddress = new Uri("https://openexchangerates.org/api/");
 
-                foreach (DateTime date in dates)
+            foreach (DateTime date in dates)
+            {
+                try
                 {
-                    try
-                    {
-                        string apiFormattedDate = date.ToString("yyyy'-'MM'-'dd");
-                        string url = $"historical/{apiFormattedDate}.json?app_id={appId}&base={baseCurrency}&symbols={symbols}";
-                        response = await client.GetAsync(url);
-                        responseBody = await response.Content.ReadAsStringAsync();
-                        response.EnsureSuccessStatusCode();
-                        RatesDTO result = JsonConvert.DeserializeObject<RatesDTO>(responseBody);
-                        result.Date = date;
-                        rates.Add(result);
-                    }
-                    catch (HttpRequestException ex)
-                    {
-                        ErrorModelDTO errorModelDTO = JsonConvert.DeserializeObject<ErrorModelDTO>(responseBody);
-                        throw new HttpServiceException($"API error. Status code: {errorModelDTO.Status}. Message: {errorModelDTO.Message}. " +
-                            $"\nDescription: {errorModelDTO.Description}", ex);
-                    }
+                    string apiFormattedDate = date.ToString("yyyy'-'MM'-'dd");
+                    string url = $"historical/{apiFormattedDate}.json?app_id={appId}&base={baseCurrency}&symbols={symbols}";
+
+                    response = await _httpClient.GetAsync(url);
+                    responseBody = await response.Content.ReadAsStringAsync();
+                    response.EnsureSuccessStatusCode();
+                    RatesDTO result = JsonConvert.DeserializeObject<RatesDTO>(responseBody);
+                    result.Date = date;
+                    rates.Add(result);
                 }
-                return rates;
+                catch (HttpRequestException ex)
+                {
+                    ErrorModelDTO errorModelDTO = JsonConvert.DeserializeObject<ErrorModelDTO>(responseBody);
+                    throw new HttpServiceException($"API error. Status code: {errorModelDTO.Status}. Message: {errorModelDTO.Message}. " +
+                        $"\nDescription: {errorModelDTO.Description}", ex);
+                }
             }
+            return rates;
         }
     }
 }
+
