@@ -19,6 +19,8 @@ namespace BadBroker.BusinessLogic.Services
         public ExchangeRatesApiClient(IOptions<Config> config, HttpClient httpClient)
         {
             _config = config;
+            httpClient.DefaultRequestHeaders.Add("Accept", "application/json");
+            httpClient.DefaultRequestHeaders.Add("User-Agent", "HttpClientFactory-Sample");
             _httpClient = httpClient;
         }
 
