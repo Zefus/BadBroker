@@ -73,7 +73,7 @@ namespace BadBroker.BusinessLogic.Services
                     }
                 }
                 await _dBService.AddRatesRange(ratesForCaching);
-                _dBService.Dispose();
+
                 List<RatesDTO> rates = apiRates.Union(cachedRates).OrderBy(r => r.Date).ToList();
 
                 OutputDTO bestCase = _bestCaseSearcher.SearchBestCase(rates, score);
@@ -95,10 +95,6 @@ namespace BadBroker.BusinessLogic.Services
             {
                 throw new TradeServiceException(ex.Message, ex);
             }
-            catch (Exception ex)
-            {
-                throw new TradeServiceException(ex.Message, ex);
-            } 
         }
     }
 }

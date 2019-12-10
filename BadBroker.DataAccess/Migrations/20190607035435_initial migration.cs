@@ -21,6 +21,12 @@ namespace BadBroker.DataAccess.Migrations
                 {
                     table.PrimaryKey("PK_RatesData", x => x.Id);
                 });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_RatesData_Date",
+                table: "RatesData",
+                column: "Date",
+                unique: true);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

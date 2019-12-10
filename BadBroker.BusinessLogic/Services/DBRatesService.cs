@@ -85,13 +85,13 @@ namespace BadBroker.BusinessLogic.Services
                 _context.SaveChanges();
                 return Task.FromResult(1);
             }
-            catch(SqlException ex)
+            catch (SqlException ex)
             {
                 throw new DBServiceException(ex.Message, ex);
             }
             catch (DbUpdateException ex)
             {
-                throw new DBServiceException(ex.Message, ex);
+                throw new NotImplementedException(ex.Message, ex);
             }
         }
 
@@ -114,6 +114,11 @@ namespace BadBroker.BusinessLogic.Services
         {
             Dispose(true);
             GC.SuppressFinalize(this);
+        }
+
+        ~DBRatesService()
+        {
+            Dispose(false);
         }
     }
 }
