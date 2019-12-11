@@ -15,7 +15,7 @@ namespace BadBroker.DataAccess.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "2.1.11-servicing-32099")
+                .HasAnnotation("ProductVersion", "2.1.3-rtm-32065")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
@@ -29,7 +29,7 @@ namespace BadBroker.DataAccess.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("QuotesData");
+                    b.ToTable("RatesData");
                 });
 
             modelBuilder.Entity("BadBroker.DataAccess.Models.RatesPerDate", b =>
@@ -40,7 +40,8 @@ namespace BadBroker.DataAccess.Migrations
 
                     b.Property<string>("Name");
 
-                    b.Property<decimal>("Rate");
+                    b.Property<decimal>("Rate")
+                    .HasColumnType("decimal(18,2)");
 
                     b.Property<int>("RatesDataId");
 

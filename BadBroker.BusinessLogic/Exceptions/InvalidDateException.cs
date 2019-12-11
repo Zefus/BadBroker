@@ -1,11 +1,14 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Runtime.Serialization;
 
 namespace BadBroker.BusinessLogic.Exceptions
 {
-    [Serializable()]
+    [Serializable]
     public class InvalidDateException : Exception
     {
+        private readonly string _resourceName;
+        private readonly IList<string> _validationErrors;
         /// <summary>
         /// Just create the exception
         /// </summary>
@@ -28,6 +31,28 @@ namespace BadBroker.BusinessLogic.Exceptions
         /// </summary>
         /// <param name="info">Serialization info</param>
         /// <param name="context">Serialization context</param>
-        public InvalidDateException(SerializationInfo info, StreamingContext context) : base(info, context) { }
+        protected InvalidDateException(SerializationInfo info, StreamingContext context) : base(info, context)
+        {
+            _resourceName = info.GetString("ResourceName");
+            _validationErrors = (IList<string>)info.GetValue("ValidationErrors", typeof(IList<string>));
+        }
+
+        public string ResourceName => _resourceName;
+
+        public IList<string> ValidationErrors => _validationErrors;
+
+        public override void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            if (info == null)
+            {
+                throw new ArgumentNullException("info");
+            }
+
+            info.AddValue("ResourceName", ResourceName);
+
+            info.AddValue("ValidationErrors", ValidationErrors, typeof(IList<string>));
+
+            base.GetObjectData(info, context);
+        }
     }
 }

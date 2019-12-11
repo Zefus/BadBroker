@@ -10,14 +10,14 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BadBroker.DataAccess.Migrations
 {
     [DbContext(typeof(BadBrokerContext))]
-    [Migration("20191009152114_add RatesPerDate column")]
-    partial class addRatesPerDatecolumn
+    [Migration("20191211080809_Initial migration")]
+    partial class Initialmigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "2.1.11-servicing-32099")
+                .HasAnnotation("ProductVersion", "2.1.3-rtm-32065")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
@@ -42,7 +42,8 @@ namespace BadBroker.DataAccess.Migrations
 
                     b.Property<string>("Name");
 
-                    b.Property<decimal>("Rate");
+                    b.Property<decimal>("Rate")
+                    .HasColumnType("decimal(18,2)");
 
                     b.Property<int>("RatesDataId");
 

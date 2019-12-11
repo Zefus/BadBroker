@@ -1,15 +1,25 @@
-﻿using Microsoft.EntityFrameworkCore.Metadata;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace BadBroker.DataAccess.Migrations
 {
-    public partial class addRatesPerDatecolumn : Migration
+    public partial class Initialmigration : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropColumn(
-                name: "Rates",
-                table: "RatesData");
+            migrationBuilder.CreateTable(
+                name: "RatesData",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    Date = table.Column<DateTime>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_RatesData", x => x.Id);
+                });
 
             migrationBuilder.CreateTable(
                 name: "RatesPerDate",
@@ -36,6 +46,12 @@ namespace BadBroker.DataAccess.Migrations
                 name: "IX_RatesPerDate_RatesDataId",
                 table: "RatesPerDate",
                 column: "RatesDataId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_RatesData_Date",
+                table: "RatesData",
+                column: "Date",
+                unique: true);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -43,10 +59,8 @@ namespace BadBroker.DataAccess.Migrations
             migrationBuilder.DropTable(
                 name: "RatesPerDate");
 
-            migrationBuilder.AddColumn<string>(
-                name: "Rates",
-                table: "RatesData",
-                nullable: true);
+            migrationBuilder.DropTable(
+                name: "RatesData");
         }
     }
 }
