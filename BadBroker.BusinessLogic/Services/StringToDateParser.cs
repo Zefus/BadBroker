@@ -9,7 +9,7 @@ namespace BadBroker.BusinessLogic.Services
         public DateTime Parse(string date)
         {
             if (date == null || date == "")
-                throw new ArgumentNullException("date", $"Patameter {nameof(date)} cannot be null or empty");
+                throw new ArgumentNullException("date", $"Parameter {nameof(date)} cannot be null or empty");
 
             string[] numbers = date.Split('.');
 
