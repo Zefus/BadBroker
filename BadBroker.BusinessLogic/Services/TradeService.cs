@@ -44,22 +44,25 @@ namespace BadBroker.BusinessLogic.Services
             try
             {                
                 DateTime startDate = _stringToDateParser.Parse(inputDTO.StartDate);
+
                 DateTime endDate = _stringToDateParser.Parse(inputDTO.EndDate);
+
                 decimal score = inputDTO.Score;
 
                 IEnumerable<DateTime> dates = _enumerateDaysBetweenDates.Execute(startDate, endDate);
 
                 IEnumerable<DateTime> cachedDates = dates.Intersect(await _dBService.SelectRates<RatesData, DateTime>(rd => rd.Date));
+
                 IEnumerable<DateTime> apiDates = dates.Except(await _dBService.SelectRates<RatesData, DateTime>(rd => rd.Date));
 
                 IEnumerable<RatesDTO> cachedRates = await _getCachedRatesOperation.ExecuteAsync(cachedDates);
+
                 IEnumerable<RatesDTO> apiRates = await _externalServiceClient.GetCurrencyRatesAsync(apiDates);
 
                 List<RatesData> ratesForCaching = new List<RatesData>();
 
                 if (apiRates.Count() != 0)
                 {                    
-
                     foreach (RatesDTO aR in apiRates)
                     {
                         RatesData ratesData = new RatesData();
@@ -77,6 +80,7 @@ namespace BadBroker.BusinessLogic.Services
                 List<RatesDTO> rates = apiRates.Union(cachedRates).OrderBy(r => r.Date).ToList();
 
                 OutputDTO bestCase = _bestCaseSearcher.SearchBestCase(rates, score);
+
                 return bestCase;
             }
             catch (NullReferenceException ex)
