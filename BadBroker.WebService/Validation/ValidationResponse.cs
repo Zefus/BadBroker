@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using BadBroker.BusinessLogic.ModelsDTO;
 
 namespace BadBroker.WebService.Validation
 {
-    public interface IModelValidator
+    public class ValidationResponse
     {
-        ValidationResponse Validate(InputDTO inputDTO);
+        public bool IsSuccsess { get; set; }
+        public string Message { get; set; }
     }
 }

@@ -29,7 +29,8 @@ namespace BadBroker.WebService.Controllers
         {
             try
             {
-                if (_modelValidator.Validate(inputDTO))
+                ValidationResponse response = _modelValidator.Validate(inputDTO);
+                if (response.IsSuccsess)
                 {
                     if (_tradeService == null)
                         throw new TradeServiceException();
@@ -39,7 +40,7 @@ namespace BadBroker.WebService.Controllers
                 }
                 else
                 {
-                    return Json(new { Success = false, message = "Error! Invalid input data." });
+                    return Json(new { Success = false, message = response.Message });
                 }
             }
             catch (TradeServiceException)
